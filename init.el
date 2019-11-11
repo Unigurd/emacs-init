@@ -7,7 +7,7 @@
    '("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default))
  '(display-time-24hr-format t)
  '(package-selected-packages
-   '(org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults pdf-tools ein smartparens buffer-move w3m fsharp-mode))
+   '(god-mode which-key gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults pdf-tools ein smartparens buffer-move w3m fsharp-mode))
  '(rainbow-delimiters-max-face-count 8)
  '(tramp-syntax 'default nil (tramp)))
 (custom-set-faces
@@ -142,7 +142,7 @@ finds the first line whose indentation satisfies predicate `good'."
 (setq inhibit-startup-screen t)
 
 ;;change default browser for 'browse-url'  to w3m
-(setq browse-url-browser-function 'w3m-goto-url-new-session)
+;;(setq browse-url-browser-function 'w3m-goto-url-new-session)
 
 ;;change w3m user-agent to android
 (setq w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.")
@@ -277,8 +277,21 @@ finds the first line whose indentation satisfies predicate `good'."
 (require 'rainbow-blocks)
 
 
-                                        ; show trailing whitespace
+;; show trailing whitespace
 (setq-default show-trailing-whitespace t)
+
+;; hide trailing whitespace in selected modes
+(defun my-hide-trailing-whitespace-maybe ()
+  "Disable `show-trailing-whitespace' in selected modes."
+  (when (derived-mode-p 'shell-mode
+                        'eww-mode)
+    (setq show-trailing-whitespace nil)))
+
+(add-hook 'after-change-major-mode-hook
+          'my-hide-trailing-whitespace-maybe)
+
+;; set eww as default
+;;(setq browse-url-browser-function 'eww-browse-url)
 
 (defun aj-toggle-fold ()
   "Toggle fold all lines larger than indentation on current line"
@@ -534,12 +547,73 @@ syntax table?"
 (setq org-log-done t)
 ;; The files in my global org thing
 (setq org-agenda-files (list "~/org/uni.org"
-                             "~/org/adult.org"))
+                             "~/org/adult.org"
+                             "~/org/mailCalendar.org"))
+
+(eval-when-compile
+  (defvar url-http-method ())
+  (defvar url-http-data ())
+  (defvar url-http-extra-headers ())
+  (defvar oauth--token-data ())
+  (defvar url-callback-function ())
+  (defvar url-callback-arguments ()))
+
+;; oauth2 for org-caldav
+(require 'oauth2)
 
 ;; calendar
 (require 'calfw)
 (require 'calfw-org)
 
-;; google calendar sync
+;;  both ways org-gcal sync
+(load-file "~/.emacs.d/org-caldav/org-caldav.el")
+(setq org-caldav-oauth2-client-id "801724761408-20jktro7tqi7it8ls39f6192fpulg7n9.apps.googleusercontent.com"
+      org-caldav-oauth2-client-secret "KYX431MCLAjudoe_6FSm1rwh"
+      org-caldav-calendar-id "sigurddam@gmail.com"
+      org-caldav-url 'google
+      org-caldav-id "801724761408-20jktro7tqi7it8ls39f6192fpulg7n9.apps.googleusercontent.com"
+      org-caldav-files (list "~/org/uni.org"
+                             "~/org/adult.org")
+      org-caldav-inbox "~/org/mailCalendar.org"
+      org-icalendar-timezone "Europe/Copenhagen")
 
-(require 'org-gcal)
+
+;; which-key shows possible continuations of an unfinished command
+(require 'which-key)
+(which-key-mode)
+
+;; god-mode for modal editing without modifier keys
+(require 'god-mode)
+(god-mode)
+(define-key god-local-mode-map (kbd ".") 'repeat)
+
+;; shift between god and normal mode with esc
+(global-set-key (kbd "<escape>") 'god-local-mode)
+
+
+;; uncomment this list and add modes for which god-mode shouldn't be enabled
+;;(add-to-list 'god-exempt-major-modes 'dired-mode)
+
+;; changes cursor when in god-mode
+(defun my-update-cursor ()
+  (setq cursor-type (if (or god-local-mode buffer-read-only)
+                        'box
+                      'bar)))
+(add-hook 'god-mode-enabled-hook 'my-update-cursor)
+(add-hook 'god-mode-disabled-hook 'my-update-cursor)
+
+(defun c/god-mode-update-cursor ()
+  (let ((limited-colors-p (> 257 (length (defined-colors)))))
+    (cond (god-local-mode (progn
+                            (set-face-background 'mode-line (if limited-colors-p "black" "#000000"))
+                            (set-face-background 'mode-line-inactive (if limited-colors-p "black" "#000000"))))
+  (t (progn
+       (set-face-background 'mode-line (if limited-colors-p "red" "#550000"))
+       (set-face-background 'mode-line-inactive (if limited-colors-p "red" "#550000")))))))
+
+(add-hook 'god-mode-enabled-hook 'c/god-mode-update-cursor)
+(add-hook 'god-mode-disabled-hook 'c/god-mode-update-cursor)
+
+
+;; binds hippe-expand
+(global-set-key "\M- " 'hippie-expand)
