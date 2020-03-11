@@ -6,8 +6,9 @@
  '(custom-safe-themes
    '("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default))
  '(display-time-24hr-format t)
+ '(doc-view-continuous t)
  '(package-selected-packages
-   '(god-mode which-key gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults pdf-tools ein smartparens buffer-move w3m fsharp-mode))
+   '(ediprolog ## evil-visual-mark-mode god-mode which-key gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults pdf-tools ein smartparens buffer-move w3m fsharp-mode))
  '(rainbow-delimiters-max-face-count 8)
  '(tramp-syntax 'default nil (tramp)))
 (custom-set-faces
@@ -271,8 +272,12 @@ finds the first line whose indentation satisfies predicate `good'."
 
 ;; rainbow-delimiters automatisk paa
 (require 'rainbow-delimiters)
-(add-hook 'prog-mode-hook  #'rainbow-delimiters-mode)
-(add-hook 'latex-mode-hook #'rainbow-delimiters-mode)
+;;(add-hook 'prog-mode-hook  #'rainbow-delimiters-mode)
+;;(add-hook 'latex-mode-hook #'rainbow-delimiters-mode)
+
+(define-globalized-minor-mode my-global-rainbow-delimiters-mode rainbow-delimiters-mode
+  (lambda () (rainbow-delimiters-mode 1)))
+(my-global-rainbow-delimiters-mode 1)
 
 (require 'rainbow-blocks)
 
@@ -284,11 +289,17 @@ finds the first line whose indentation satisfies predicate `good'."
 (defun my-hide-trailing-whitespace-maybe ()
   "Disable `show-trailing-whitespace' in selected modes."
   (when (derived-mode-p 'shell-mode
-                        'eww-mode)
+                        'eww-mode
+                        'rc-irc-mode)
     (setq show-trailing-whitespace nil)))
 
 (add-hook 'after-change-major-mode-hook
           'my-hide-trailing-whitespace-maybe)
+
+;; eww stuff
+
+;; higher contrast:
+(setq shr-color-visible-luminance-min 70)
 
 ;; set eww as default
 ;;(setq browse-url-browser-function 'eww-browse-url)
@@ -582,38 +593,25 @@ syntax table?"
 (require 'which-key)
 (which-key-mode)
 
-;; god-mode for modal editing without modifier keys
-(require 'god-mode)
-(god-mode)
-(define-key god-local-mode-map (kbd ".") 'repeat)
-
-;; shift between god and normal mode with esc
-(global-set-key (kbd "<escape>") 'god-local-mode)
-
-
-;; uncomment this list and add modes for which god-mode shouldn't be enabled
-;;(add-to-list 'god-exempt-major-modes 'dired-mode)
-
-;; changes cursor when in god-mode
-(defun my-update-cursor ()
-  (setq cursor-type (if (or god-local-mode buffer-read-only)
-                        'box
-                      'bar)))
-(add-hook 'god-mode-enabled-hook 'my-update-cursor)
-(add-hook 'god-mode-disabled-hook 'my-update-cursor)
-
-(defun c/god-mode-update-cursor ()
-  (let ((limited-colors-p (> 257 (length (defined-colors)))))
-    (cond (god-local-mode (progn
-                            (set-face-background 'mode-line (if limited-colors-p "black" "#000000"))
-                            (set-face-background 'mode-line-inactive (if limited-colors-p "black" "#000000"))))
-  (t (progn
-       (set-face-background 'mode-line (if limited-colors-p "red" "#550000"))
-       (set-face-background 'mode-line-inactive (if limited-colors-p "red" "#550000")))))))
-
-(add-hook 'god-mode-enabled-hook 'c/god-mode-update-cursor)
-(add-hook 'god-mode-disabled-hook 'c/god-mode-update-cursor)
-
-
 ;; binds hippe-expand
 (global-set-key "\M- " 'hippie-expand)
+
+;; For PLD
+(add-to-list 'auto-mode-alist '("\\.le\\'" . lisp-mode))
+
+
+;; Evil-mode
+(add-to-list 'load-path "~/.emacs.d/evil")
+(require 'evil)
+(evil-mode 1)
+
+
+;; prolog shit
+(require 'ediprolog)
+(global-set-key [f10] 'ediprolog-dwim)
+
+(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
+(add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
+
+
+(add-hook 'fs-mode-hook #'smartparens-mode)
