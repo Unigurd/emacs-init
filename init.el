@@ -8,7 +8,7 @@
  '(display-time-24hr-format t)
  '(doc-view-continuous t)
  '(package-selected-packages
-   '(ediprolog ## evil-visual-mark-mode god-mode which-key gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults pdf-tools ein smartparens buffer-move w3m fsharp-mode))
+   '(dante intero ediprolog ## evil-visual-mark-mode god-mode which-key gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults pdf-tools ein smartparens buffer-move w3m fsharp-mode))
  '(rainbow-delimiters-max-face-count 8)
  '(tramp-syntax 'default nil (tramp)))
 (custom-set-faces
@@ -30,108 +30,114 @@
 (put 'narrow-to-region 'disabled nil)
 
 
+;;
+;;:   SETUP
+;;
+
+;; Disable emacs startup-screen
+(setq inhibit-startup-screen t)
+
+;;Removes the bars
+(scroll-bar-mode 0)
+(tool-bar-mode 0)
+(menu-bar-mode 0)
+
+;;Show line and column number in the mode line
+(linum-mode 1)
+(column-number-mode 1)
+
+;; Changes all yes/no questions to y/n type
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;;Stores backup files in ~/.emacs.d/backups
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+
+;; displays the time and date in the mode line
+(display-time)
+
+;; binds hippe-expand
+(global-set-key "\M- " 'hippie-expand)
+
+;; Displays battery percentage in the mode line
+(display-battery-mode 1)
+
+;;Overwrite selected content
+(delete-selection-mode)
+
+;; move to the window in the other direction of C-x o
+(global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1)))
+
+;;C-S-D works as delete
+(global-set-key (kbd "C-S-D") 'backward-delete-char-untabify)
+
+;;highlighting matching parentheses
+(setq show-paren-delay 0)
+(show-paren-mode 1)
+
+;; make ibuffer default buffer manager
+(defalias 'list-buffers 'ibuffer)
+
+;; I don't remember what this did,
+;; So I commented to see if I miss it.
+;; Delete if found and not missed.
+;;(put 'dired-find-alternate-file 'disabled nil)
+
+;; show trailing whitespace
+(setq-default show-trailing-whitespace t)
+
+;; higher contrast (of what?)
+(setq shr-color-visible-luminance-min 70)
+
+;; hide trailing whitespace in selected modes
+(defun my-hide-trailing-whitespace-maybe ()
+  "Disable `show-trailing-whitespace' in selected modes."
+  (when (derived-mode-p 'shell-mode
+                        'eww-mode
+                        'rc-irc-mode)
+    (setq show-trailing-whitespace nil)))
+
+(add-hook 'after-change-major-mode-hook
+          'my-hide-trailing-whitespace-maybe)
+
+;; No need to confirm when reverting buffers
+;; Source: http://www.emacswiki.org/emacs-en/download/misc-cmds.el
+(defun revert-buffer-no-confirm ()
+  "Revert buffer without confirmation."
+  (interactive)
+  (revert-buffer :ignore-auto :noconfirm))
+(global-set-key (kbd "C-c u") 'revert-buffer-no-confirm)
+
+
+;;
+;;:   PACKAGES
+;;
 
 ;;; Initialize MELPA
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 (unless package-archive-contents (package-refresh-contents))
-;;(package-initialize)
 
-(require 'fsharp-mode)
+;; Evil-mode
+(add-to-list 'load-path "~/.emacs.d/evil")
+(require 'evil)
+;;(add-hook 'evil-mode-hook (lambda () (local-set-key (kbd "<tab>") 'indent-for-tab-command)))
+(evil-global-set-key 'normal (kbd "<tab>") 'indent-for-tab-command)
+(evil-global-set-key 'insert (kbd "<tab>") 'indent-for-tab-command)
 
-(require 'buffer-move)
-(global-set-key (kbd "<C-S-up>")     'buf-move-up)
-(global-set-key (kbd "<C-S-down>")   'buf-move-down)
-(global-set-key (kbd "<C-S-left>")   'buf-move-left)
-(global-set-key (kbd "<C-S-right>")  'buf-move-right)
+;;(define-key evil-motion-state-minor-mode-map (kbd "<tab>") 'indent-for-tab-command)
+(evil-mode 1)
 
+;; rainbow
+(require 'rainbow-delimiters)
+(require 'rainbow-blocks)
 
-;;
-;;    INDENTATION NAVIGATION COMMANDS
-;;
-
-(defun indentation-get-next-good-line (direction skip good)
-  "Moving in direction `direction', and skipping over blank lines and lines that
-satisfy relation `skip' between their indentation and the original indentation,
-finds the first line whose indentation satisfies predicate `good'."
-  (let ((starting-indentation (current-indentation))
-        (lines-moved direction))
-    (save-excursion
-      (while (and (zerop (forward-line direction))
-                  (or (eolp)  ; Skip past blank lines and other skip lines
-                      (funcall skip (current-indentation) starting-indentation)))
-        (setq lines-moved (+ lines-moved direction)))
-      ;; Now we can't go further. Which case is it?
-      (if (and
-           (not (eobp))
-           (not (bobp))
-           (funcall good (current-indentation) starting-indentation))
-          lines-moved
-        nil))))
-
-(defun indentation-get-next-sibling-line ()
-  "The line number of the next sibling, if any."
-  (indentation-get-next-good-line 1 '> '=))
-
-(defun indentation-get-previous-sibling-line ()
-  "The line number of the previous sibling, if any"
-  (indentation-get-next-good-line -1 '> '=))
-
-(defun indentation-get-parent-line ()
-  "The line number of the parent, if any."
-  (indentation-get-next-good-line -1 '>= '<))
-
-(defun indentation-get-child-line ()
-  "The line number of the first child, if any."
-  (indentation-get-next-good-line +1 'ignore '>))
-
-
-(defun indentation-move-to-line (func preserve-column name)
-  "Move the number of lines given by func. If not possible, use `name' to say so."
-  (let ((saved-column (current-column))
-        (lines-to-move-by (funcall func)))
-    (if lines-to-move-by
-        (progn
-          (forward-line lines-to-move-by)
-          (move-to-column (if preserve-column
-                              saved-column
-                            (current-indentation))))
-      (message "No %s to move to." name))))
-
-(defun indentation-forward-to-next-sibling ()
-  "Move to the next sibling if any, retaining column position."
-  (interactive "@")
-  (indentation-move-to-line 'indentation-get-next-sibling-line t "next sibling"))
-
-(defun indentation-backward-to-previous-sibling ()
-  "Move to the previous sibling if any, retaining column position."
-  (interactive "@")
-  (indentation-move-to-line 'indentation-get-previous-sibling-line t "previous sibling"))
-
-(defun indentation-up-to-parent ()
-  "Move to the parent line if any."
-  (interactive "@")
-  (indentation-move-to-line 'indentation-get-parent-line nil "parent"))
-
-(defun indentation-down-to-child ()
-  "Move to the first child line if any."
-  (interactive "@")
-  (indentation-move-to-line 'indentation-get-child-line nil "child"))
-
-
-;;Sets indentation navigation
-(global-set-key (kbd "C-S-n")     'indentation-forward-to-next-sibling)
-(global-set-key (kbd "C-S-p")     'indentation-backward-to-previous-sibling)
-(global-set-key (kbd "C-S-b")     'indentation-up-to-parent)
-(global-set-key (kbd "C-S-f")     'indentation-down-to-child)
-
-
-;;
-;; END OF INDENTATION COMMANDS
-;;
-
+;; rainbow-delimiters automatisk paa
+(define-globalized-minor-mode my-global-rainbow-delimiters-mode rainbow-delimiters-mode
+  (lambda () (rainbow-delimiters-mode 1)))
+(my-global-rainbow-delimiters-mode 1)
 
 ;;  smartparens
+;; Should I get evil-smartparens instead/alongside?
 (require 'smartparens-config)
 (add-hook 'fs-mode-hook #'smartparens-mode)
 (global-set-key (kbd "C-M-f")     'sp-forward-sexp)
@@ -139,15 +145,50 @@ finds the first line whose indentation satisfies predicate `good'."
 (global-set-key (kbd "C-M-n")     'sp-down-sexp)
 (global-set-key (kbd "C-M-p")     'sp-backward-up-sexp)
 
-;; Disable emacs startup-screen
-(setq inhibit-startup-screen t)
+;; org-mode
+(require 'org)
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-log-done t)
+;; The files in my global org thing
+(setq org-agenda-files (list "~/org/uni.org"
+                             "~/org/adult.org"
+                             "~/org/mailCalendar.org"))
 
-;;change default browser for 'browse-url'  to w3m
-;;(setq browse-url-browser-function 'w3m-goto-url-new-session)
+(eval-when-compile
+  (defvar url-http-method ())
+  (defvar url-http-data ())
+  (defvar url-http-extra-headers ())
+  (defvar oauth--token-data ())
+  (defvar url-callback-function ())
+  (defvar url-callback-arguments ()))
+
+;; oauth2 for org-caldav
+(require 'oauth2)
+
+;; calendar
+(require 'calfw)
+(require 'calfw-org)
+
+;;  both ways org-gcal sync
+(load-file "~/.emacs.d/org-caldav/org-caldav.el")
+(setq org-caldav-oauth2-client-id "801724761408-20jktro7tqi7it8ls39f6192fpulg7n9.apps.googleusercontent.com"
+      org-caldav-oauth2-client-secret "KYX431MCLAjudoe_6FSm1rwh"
+      org-caldav-calendar-id "sigurddam@gmail.com"
+      org-caldav-url 'google
+      org-caldav-id "801724761408-20jktro7tqi7it8ls39f6192fpulg7n9.apps.googleusercontent.com"
+      org-caldav-files (list "~/org/uni.org"
+                             "~/org/adult.org")
+      org-caldav-inbox "~/org/mailCalendar.org"
+      org-icalendar-timezone "Europe/Copenhagen")
+
 
 ;;change w3m user-agent to android
+;; But why?
 (setq w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.")
 
+
+;; Back when I didn't use the mouse :')
 (define-minor-mode disable-mouse-mode
   "A minor-mode that disables all mouse keybinds."
   :global t
@@ -162,57 +203,17 @@ finds the first line whose indentation satisfies predicate `good'."
       (let ((k (format "%s%s-%s" prefix type n)))
         (define-key disable-mouse-mode-map
           (vector (intern k)) #'ignore)))))
-(disable-mouse-mode 1)
-
-;;Move between windows with S-arrows
-(windmove-default-keybindings)
-
-;;Overwrite selected content
-(delete-selection-mode)
-
-;; move to the window in the other direction of C-x o
-(global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1)))
 
 
-;;highlighting matching parentheses
-(setq show-paren-delay 0)
-(show-paren-mode 1)
+;; ido-mode auto paa
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
+(setq ido-create-new-buffer 'always)
+(defadvice ido-switch-buffer (around no-confirmation activate)
+  (let ((confirm-nonexistent-file-or-buffer nil))
+    ad-do-it))
 
-;; make ibuffer default buffer manager
-(defalias 'list-buffers 'ibuffer) 
-;;Resize windows
-;; (global-set-key (kbd "S-C-<left>") 'shrink-window-horizontally)
-;; (global-set-key (kbd "S-C-<right>") 'enlarge-window-horizontally)
-;; (global-set-key (kbd "S-C-<down>") 'enlarge-window)
-;; (global-set-key (kbd "S-C-<up>") 'shrink-window)
-
-;;C-S-D works as delete
-(global-set-key (kbd "C-S-D") 'backward-delete-char-untabify)
-
-;;M-S-D deletes word backward
-;; (defun backward-delete-word ()
-;;   (let ((beg (point))) (backward-word 1) (delete-region beg (point))))
-;; (global-set-key (kbd "M-D") 'backward-delete-word)
-
-;;Removes the scrollbar and toolbar
-(scroll-bar-mode 0)
-(tool-bar-mode 0)
-(menu-bar-mode 0)
-
-
-;; Changes all yes/no questions to y/n type
-(fset 'yes-or-no-p 'y-or-n-p)
-;;Stores backup files in ~/.emacs.d/backups
-(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-
-;;Show line and column number in the mode line
-(linum-mode 1)
-(column-number-mode 1)
-;; displays the time and date in the mode line
-;;(setq calendar-date-display-form ((format "%s-%.2d-%.2d" year (string-to-number month) (string-to-number day)))
-(display-time)
-;; Displays battery percentage in the mode line
-(display-battery-mode 1)
 
 ;;Smart mode line
 ;;(use-package smart-mode-line)
@@ -224,167 +225,62 @@ finds the first line whose indentation satisfies predicate `good'."
 (put 'upcase-region 'disabled nil)
 
 
+;;
+;;:   LANGUAGES
+;;
+
+;; PLD-LISP
+(add-to-list 'auto-mode-alist '("\\.le\\'" . lisp-mode))
+
+;; Prolog
+(require 'ediprolog)
+(global-set-key [f10] 'ediprolog-dwim)
+
+(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
+(add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
+
+;; F#
+(require 'fsharp-mode)
+(add-hook 'fs-mode-hook #'smartparens-mode) ;Why this?
+
+;; Common Lisp
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
+
 ;; Replace "sbcl" with the path to your implementation
 (setq inferior-lisp-program "sbcl")
 
-
-
-;; switch other window to default buffer
-(global-set-key (kbd "C-x r")
-		        '((switch-to-buffer)
-		          (other-window)
-		          (switch-to-buffer)))
-
-
-;; multiple cursors
-(require 'multiple-cursors)
-;;cursor on each highlighted line
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-;;cursor on each highlighted thing
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-
-
+;; C
 ;; use spaces instead of tabs, at least in cc mode
 (setq-default indent-tabs-mode nil)
-(setq-default tab-width 4) ; Assuming you want your tabs to be four spaces wide
+(setq-default tab-width 2) ; Assuming you want your tabs to be four spaces wide
 (defvaralias 'c-basic-offset 'tab-width)
 
+; c indentation is now 2 spaces, i think
+(setq c-default-style "bsd"
+      c-basic-offset 2)
+
+;; Java?
 ;;indents arguments to functions with long names better
 (defun my-indent-setup ()
   (c-set-offset 'arglist-intro '+))
 (add-hook 'java-mode-hook 'my-indent-setup)
 
+;; Python
 ;; set python interpreter
 (setq python-shell-interpreter "python3")
 
-;; Kan jeg ikke faa til at virke
-(autoload 'zap-up-to-char "misc"
-  "Kill up to, but not including ARGth occurrence of CHAR." t)
-(global-set-key (kbd "<M-z>")     'zap-up-to-char)
-
-;;Virker vist heller ikke
-(require 'saveplace)
-(setq-default save-place t)
 
 
-;; rainbow-delimiters automatisk paa
-(require 'rainbow-delimiters)
-;;(add-hook 'prog-mode-hook  #'rainbow-delimiters-mode)
-;;(add-hook 'latex-mode-hook #'rainbow-delimiters-mode)
-
-(define-globalized-minor-mode my-global-rainbow-delimiters-mode rainbow-delimiters-mode
-  (lambda () (rainbow-delimiters-mode 1)))
-(my-global-rainbow-delimiters-mode 1)
-
-(require 'rainbow-blocks)
 
 
-;; show trailing whitespace
-(setq-default show-trailing-whitespace t)
-
-;; hide trailing whitespace in selected modes
-(defun my-hide-trailing-whitespace-maybe ()
-  "Disable `show-trailing-whitespace' in selected modes."
-  (when (derived-mode-p 'shell-mode
-                        'eww-mode
-                        'rc-irc-mode)
-    (setq show-trailing-whitespace nil)))
-
-(add-hook 'after-change-major-mode-hook
-          'my-hide-trailing-whitespace-maybe)
-
-;; eww stuff
-
-;; higher contrast:
-(setq shr-color-visible-luminance-min 70)
-
-;; set eww as default
-;;(setq browse-url-browser-function 'eww-browse-url)
-
-(defun aj-toggle-fold ()
-  "Toggle fold all lines larger than indentation on current line"
-  (interactive)
-  (let ((col 1))
-    (save-excursion
-      (back-to-indentation)
-      (setq col (+ 1 (current-column)))
-      (set-selective-display
-       (if selective-display nil (or col 1))))))
-(global-set-key [(M C i)] 'aj-toggle-fold)
-
-                                        ; c indentation is now 2 spaces, i think
-(setq c-default-style "bsd"
-      c-basic-offset 2)
-
-                                        ; dired-jump always available
-(global-set-key (kbd "C-x C-j") 'dired-jump)
 
 
-;; Source: http://www.emacswiki.org/emacs-en/download/misc-cmds.el
-(defun revert-buffer-no-confirm ()
-  "Revert buffer without confirmation."
-  (interactive)
-  (revert-buffer :ignore-auto :noconfirm))
-(global-set-key (kbd "C-c u") 'revert-buffer-no-confirm)
 
 
-(defun open-delimiter-p ()
-  "Is character at point a closing delimiter according to the
-syntax table?"
-  (eq ?\( (char-syntax (char-after))))
 
-                                        ; goto mark
-(defun goto-mark ()
-  (interactive)
-  "Jump to mark while setting mark to the old point"
-  (let ((old-point (point)))
-    (goto-char (mark))
-    (pop-mark)
-    (push-mark old-point)))
-(global-set-key (kbd "C-M-g") 'goto-mark)
-
-(defun substitute-parens (point mark opener closer)
-  (cond
-   ((open-delimiter-p)
-    (mark-sexp)
-    (goto-mark)
-    (backward-delete-char-untabify 1)
-    (insert closer)
-    (goto-mark)
-    (delete-forward-char 1)
-    (insert opener)
-    (goto-char point)
-    (pop-mark))
-   (message "Not at delimiter")))
-
-
-(defun substitute-parens-input (point mark)
-  (interactive "r")
-  (cond
-   ((open-delimiter-p)
-    (let ((opener (read-string "Replace opening delimiter with: "))
-          (closer (read-string "Replace closing delimiter with: ")))
-      (substitute-parens point mark opener closer)))
-   (t
-    (message "Not at delimiter"))))
-
-
-(defun delete-parens (point mark)
-  (interactive "r")
-  (substitute-parens point mark "" ""))
-
-
-(global-set-key (kbd "C-M-<") 'substitute-parens-input)
-(global-set-key (kbd "C-M-<backspace>") 'delete-parens)
-
-
-;; Setup Agda-mode
-(load-file (let ((coding-system-for-read 'utf-8))
-             (shell-command-to-string "agda-mode locate")))
-
+;;
+;;:   E-MAIL
+;;
 
 (require 'org-mime)
 (setq org-mime-library 'mml)
@@ -549,69 +445,3 @@ syntax table?"
 ;; 					                           ("/acc2-gmail/[acc2].Starred"   . ?r)
 ;; 					                           ("/acc2-gmail/[acc2].drafts"    . ?d)
 ;; 					                           ))))))
-(put 'dired-find-alternate-file 'disabled nil)
-
-;; Stuff for activating org mode
-(require 'org)
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
-(setq org-log-done t)
-;; The files in my global org thing
-(setq org-agenda-files (list "~/org/uni.org"
-                             "~/org/adult.org"
-                             "~/org/mailCalendar.org"))
-
-(eval-when-compile
-  (defvar url-http-method ())
-  (defvar url-http-data ())
-  (defvar url-http-extra-headers ())
-  (defvar oauth--token-data ())
-  (defvar url-callback-function ())
-  (defvar url-callback-arguments ()))
-
-;; oauth2 for org-caldav
-(require 'oauth2)
-
-;; calendar
-(require 'calfw)
-(require 'calfw-org)
-
-;;  both ways org-gcal sync
-(load-file "~/.emacs.d/org-caldav/org-caldav.el")
-(setq org-caldav-oauth2-client-id "801724761408-20jktro7tqi7it8ls39f6192fpulg7n9.apps.googleusercontent.com"
-      org-caldav-oauth2-client-secret "KYX431MCLAjudoe_6FSm1rwh"
-      org-caldav-calendar-id "sigurddam@gmail.com"
-      org-caldav-url 'google
-      org-caldav-id "801724761408-20jktro7tqi7it8ls39f6192fpulg7n9.apps.googleusercontent.com"
-      org-caldav-files (list "~/org/uni.org"
-                             "~/org/adult.org")
-      org-caldav-inbox "~/org/mailCalendar.org"
-      org-icalendar-timezone "Europe/Copenhagen")
-
-
-;; which-key shows possible continuations of an unfinished command
-(require 'which-key)
-(which-key-mode)
-
-;; binds hippe-expand
-(global-set-key "\M- " 'hippie-expand)
-
-;; For PLD
-(add-to-list 'auto-mode-alist '("\\.le\\'" . lisp-mode))
-
-
-;; Evil-mode
-(add-to-list 'load-path "~/.emacs.d/evil")
-(require 'evil)
-(evil-mode 1)
-
-
-;; prolog shit
-(require 'ediprolog)
-(global-set-key [f10] 'ediprolog-dwim)
-
-(autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
-(add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
-
-
-(add-hook 'fs-mode-hook #'smartparens-mode)
