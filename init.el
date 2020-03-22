@@ -1,16 +1,33 @@
+;;; Initialize MELPA
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+(unless package-archive-contents (package-refresh-contents))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   '("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default))
+   (quote
+    ("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
  '(display-time-24hr-format t)
  '(doc-view-continuous t)
+ '(haskell-process-auto-import-loaded-modules t)
+ '(haskell-process-log t)
+ '(haskell-process-suggest-hoogle-imports t)
+ '(haskell-process-suggest-remove-import-lines t)
  '(package-selected-packages
-   '(dante intero ediprolog ## evil-visual-mark-mode god-mode which-key gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults pdf-tools ein smartparens buffer-move w3m fsharp-mode))
+   (quote
+    (transient magit evil dante intero ediprolog ## which-key gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults pdf-tools ein smartparens buffer-move w3m fsharp-mode)))
  '(rainbow-delimiters-max-face-count 8)
- '(tramp-syntax 'default nil (tramp)))
+ '(tramp-syntax (quote default)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -112,19 +129,19 @@
 ;;:   PACKAGES
 ;;
 
-;;; Initialize MELPA
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
-(unless package-archive-contents (package-refresh-contents))
+
+;; Magit
+;;(require 'magit)
+
 
 ;; Evil-mode
 (add-to-list 'load-path "~/.emacs.d/evil")
 (require 'evil)
-;;(add-hook 'evil-mode-hook (lambda () (local-set-key (kbd "<tab>") 'indent-for-tab-command)))
+(add-hook 'evil-mode-hook (lambda () (local-set-key (kbd "<tab>") 'indent-for-tab-command)))
 (evil-global-set-key 'normal (kbd "<tab>") 'indent-for-tab-command)
 (evil-global-set-key 'insert (kbd "<tab>") 'indent-for-tab-command)
 
-;;(define-key evil-motion-state-minor-mode-map (kbd "<tab>") 'indent-for-tab-command)
+;(define-key evil-motion-state-minor-mode-map (kbd "<tab>") 'indent-for-tab-command)
 (evil-mode 1)
 
 ;; rainbow
@@ -135,15 +152,6 @@
 (define-globalized-minor-mode my-global-rainbow-delimiters-mode rainbow-delimiters-mode
   (lambda () (rainbow-delimiters-mode 1)))
 (my-global-rainbow-delimiters-mode 1)
-
-;;  smartparens
-;; Should I get evil-smartparens instead/alongside?
-(require 'smartparens-config)
-(add-hook 'fs-mode-hook #'smartparens-mode)
-(global-set-key (kbd "C-M-f")     'sp-forward-sexp)
-(global-set-key (kbd "C-M-b")     'sp-backward-sexp)
-(global-set-key (kbd "C-M-n")     'sp-down-sexp)
-(global-set-key (kbd "C-M-p")     'sp-backward-up-sexp)
 
 ;; org-mode
 (require 'org)
@@ -182,11 +190,9 @@
       org-caldav-inbox "~/org/mailCalendar.org"
       org-icalendar-timezone "Europe/Copenhagen")
 
-
 ;;change w3m user-agent to android
 ;; But why?
 (setq w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.")
-
 
 ;; Back when I didn't use the mouse :')
 (define-minor-mode disable-mouse-mode
@@ -229,6 +235,16 @@
 ;;:   LANGUAGES
 ;;
 
+;; Haskell
+(require 'haskell-mode)
+(require 'haskell-interactive-mode)
+(require 'haskell-process)
+(add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-unicode-input-method)
+
+(define-key haskell-mode-map (kbd "C-c j") 'haskell-mode-jump-to-def)
+(define-key haskell-interactive-mode-map (kbd "C-`") 'haskell-interactive-bring)
+
 ;; PLD-LISP
 (add-to-list 'auto-mode-alist '("\\.le\\'" . lisp-mode))
 
@@ -240,8 +256,8 @@
 (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
 
 ;; F#
-(require 'fsharp-mode)
-(add-hook 'fs-mode-hook #'smartparens-mode) ;Why this?
+;;(require 'fsharp-mode)
+;;(add-hook 'fs-mode-hook #'smartparens-mode) ;Why this?
 
 ;; Common Lisp
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
@@ -268,8 +284,6 @@
 ;; Python
 ;; set python interpreter
 (setq python-shell-interpreter "python3")
-
-
 
 
 
