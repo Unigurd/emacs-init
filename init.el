@@ -1,3 +1,4 @@
+(setq user-init-file "/home/sigurd/.emacs.d/init.el")
 ;;; Initialize MELPA
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
@@ -25,9 +26,10 @@
  '(haskell-process-suggest-remove-import-lines t)
  '(package-selected-packages
    (quote
-    (transient magit evil dante intero ediprolog ## which-key gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults pdf-tools ein smartparens buffer-move w3m fsharp-mode)))
+    (ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode)))
  '(rainbow-delimiters-max-face-count 8)
- '(tramp-syntax (quote default)))
+ '(send-mail-function (quote smtpmail-send-it))
+ '(tramp-syntax (quote ftp)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -51,6 +53,10 @@
 ;;:   SETUP
 ;;
 
+;; currently only used for lexical-let somewhere later
+;; Should it be moved?
+(require 'cl)
+
 ;; Disable emacs startup-screen
 (setq inhibit-startup-screen t)
 
@@ -70,13 +76,15 @@
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 
 ;; displays the time and date in the mode line
-(display-time)
+;;(display-time)
+
+(global-set-key (kbd "M-O") 'kill-this-buffer)
 
 ;; binds hippe-expand
 (global-set-key "\M- " 'hippie-expand)
 
 ;; Displays battery percentage in the mode line
-(display-battery-mode 1)
+;;(display-battery-mode 1)
 
 ;;Overwrite selected content
 (delete-selection-mode)
@@ -94,10 +102,11 @@
 ;; make ibuffer default buffer manager
 (defalias 'list-buffers 'ibuffer)
 
-;; I don't remember what this did,
-;; So I commented to see if I miss it.
-;; Delete if found and not missed.
-;;(put 'dired-find-alternate-file 'disabled nil)
+;; easy keys to split window. Key based on ErgoEmacs keybinding
+(global-set-key (kbd "M-2") 'delete-window)        ; close current pane
+(global-set-key (kbd "M-3") 'delete-other-windows) ; expand current pane
+(global-set-key (kbd "M-4") 'split-window-right)   ; split pane left/right
+(global-set-key (kbd "M-5") 'split-window-below)   ; split pane top/bottom
 
 ;; show trailing whitespace
 (setq-default show-trailing-whitespace t)
@@ -125,22 +134,54 @@
 (global-set-key (kbd "C-c u") 'revert-buffer-no-confirm)
 
 
+;; Generates commands that writes a specific piece of text
+;; Doesn't handle sticky properties, whatever that is
+;; I'm using them for writing danish letters on
+;; an english/american keyboard layout (I forget which)
+;; in evil's insert state
+(defun generate-interactive-text-inserter (text)
+  (lexical-let ((text text))
+    (lambda (arg)
+      (interactive "P")
+      (dotimes (i (prefix-numeric-value arg))
+        (insert text)))))
+
+
+
+
 ;;
 ;;:   PACKAGES
 ;;
 
+(require 'tramp)
+;(set-variable tramp-syntax "ftp")
+
 
 ;; Magit
-;;(require 'magit)
+(require 'magit)
 
+;; ace-window
+(require 'ace-window)
+(global-set-key (kbd "M-o") 'ace-window)
+(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
 
 ;; Evil-mode
 (add-to-list 'load-path "~/.emacs.d/evil")
 (require 'evil)
 (add-hook 'evil-mode-hook (lambda () (local-set-key (kbd "<tab>") 'indent-for-tab-command)))
+
+;; Normal emacs indenting
+;; Currently is active in too many modes, like *Help* buffers
 (evil-global-set-key 'normal (kbd "<tab>") 'indent-for-tab-command)
 (evil-global-set-key 'insert (kbd "<tab>") 'indent-for-tab-command)
 
+;; Write the danish letters by s-(whatever their key would be)
+(evil-global-set-key 'insert (kbd "s-;") (generate-interactive-text-inserter ?æ))
+(evil-global-set-key 'insert (kbd "s-:") (generate-interactive-text-inserter ?Æ))
+(evil-global-set-key 'insert (kbd "s-'") (generate-interactive-text-inserter ?ø))
+(evil-global-set-key 'insert (kbd "s-\"") (generate-interactive-text-inserter ?Ø))
+(evil-global-set-key 'insert (kbd "s-[") (generate-interactive-text-inserter ?å))
+(evil-global-set-key 'insert (kbd "s-{") (generate-interactive-text-inserter ?Å))
 ;(define-key evil-motion-state-minor-mode-map (kbd "<tab>") 'indent-for-tab-command)
 (evil-mode 1)
 
@@ -163,32 +204,32 @@
                              "~/org/adult.org"
                              "~/org/mailCalendar.org"))
 
-(eval-when-compile
-  (defvar url-http-method ())
-  (defvar url-http-data ())
-  (defvar url-http-extra-headers ())
-  (defvar oauth--token-data ())
-  (defvar url-callback-function ())
-  (defvar url-callback-arguments ()))
+;;(eval-when-compile
+;;  (defvar url-http-method ())
+;;  (defvar url-http-data ())
+;;  (defvar url-http-extra-headers ())
+;;  (defvar oauth--token-data ())
+;;  (defvar url-callback-function ())
+;;  (defvar url-callback-arguments ()))
 
-;; oauth2 for org-caldav
-(require 'oauth2)
+;;;; oauth2 for org-caldav
+;;(require 'oauth2)
 
 ;; calendar
 (require 'calfw)
 (require 'calfw-org)
 
-;;  both ways org-gcal sync
-(load-file "~/.emacs.d/org-caldav/org-caldav.el")
-(setq org-caldav-oauth2-client-id "801724761408-20jktro7tqi7it8ls39f6192fpulg7n9.apps.googleusercontent.com"
-      org-caldav-oauth2-client-secret "KYX431MCLAjudoe_6FSm1rwh"
-      org-caldav-calendar-id "sigurddam@gmail.com"
-      org-caldav-url 'google
-      org-caldav-id "801724761408-20jktro7tqi7it8ls39f6192fpulg7n9.apps.googleusercontent.com"
-      org-caldav-files (list "~/org/uni.org"
-                             "~/org/adult.org")
-      org-caldav-inbox "~/org/mailCalendar.org"
-      org-icalendar-timezone "Europe/Copenhagen")
+;;;;  both ways org-gcal sync
+;;(load-file "~/.emacs.d/org-caldav/org-caldav.el")
+;;(setq org-caldav-oauth2-client-id "801724761408-20jktro7tqi7it8ls39f6192fpulg7n9.apps.googleusercontent.com"
+;;      org-caldav-oauth2-client-secret "KYX431MCLAjudoe_6FSm1rwh"
+;;      org-caldav-calendar-id "sigurddam@gmail.com"
+;;      org-caldav-url 'google
+;;      org-caldav-id "801724761408-20jktro7tqi7it8ls39f6192fpulg7n9.apps.googleusercontent.com"
+;;      org-caldav-files (list "~/org/uni.org"
+;;                             "~/org/adult.org")
+;;      org-caldav-inbox "~/org/mailCalendar.org"
+;;      org-icalendar-timezone "Europe/Copenhagen")
 
 ;;change w3m user-agent to android
 ;; But why?
@@ -222,7 +263,7 @@
 
 
 ;;Smart mode line
-;;(use-package smart-mode-line)
+(require 'smart-mode-line)
 (setq sml/mode-width 'full)
 (sml/setup)
 (sml/apply-theme 'dark)
@@ -235,12 +276,15 @@
 ;;:   LANGUAGES
 ;;
 
+;; futhark
+(require 'futhark-mode)
+
 ;; Haskell
 (require 'haskell-mode)
 (require 'haskell-interactive-mode)
 (require 'haskell-process)
 (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-unicode-input-method)
+;;(add-hook 'haskell-mode-hook 'turn-on-haskell-unicode-input-method)
 
 (define-key haskell-mode-map (kbd "C-c j") 'haskell-mode-jump-to-def)
 (define-key haskell-interactive-mode-map (kbd "C-`") 'haskell-interactive-bring)
@@ -296,9 +340,9 @@
 ;;:   E-MAIL
 ;;
 
-(require 'org-mime)
-(setq org-mime-library 'mml)
-(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e/")
+;;(require 'org-mime)
+;;(setq org-mime-library 'mml)
+;;(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e/")
 ;; (require 'mu4e)
 ;;   (setq mu4e-maildir (expand-file-name "~/mail/Outlook_Offlineimap"))
 
@@ -459,3 +503,7 @@
 ;; 					                           ("/acc2-gmail/[acc2].Starred"   . ?r)
 ;; 					                           ("/acc2-gmail/[acc2].drafts"    . ?d)
 ;; 					                           ))))))
+
+
+;; Makes 'a' work in Dired
+(put 'dired-find-alternate-file 'disabled nil)
