@@ -278,6 +278,31 @@
 (put 'upcase-region 'disabled nil)
 
 
+;; Spotify client
+;; Downloaded from https://github.com/danielfm/spotify.el
+(add-to-list 'load-path "~/.emacs.d/manual/spotify")
+(require 'spotify)
+
+
+;; Settings
+
+;; Note that the original spotify-connect.el used if-let*.
+;; I changed that because I couldn't find it
+;; Not sure if they do the same, but it seems to work fine.
+
+(setq spotify-oauth2-client-id     "a5358da03e3841f3af5f5ff0c14750ea")
+(setq spotify-oauth2-client-secret "a10c46aa87bc4df5a73acf065740076d")
+(define-key spotify-mode-map (kbd "C-c .") 'spotify-command-map)
+
+;; Connect allows to control Spotify on other devices
+(setq spotify-transport 'connect)
+
+;; Global spotify-remote-mode
+(define-globalized-minor-mode my-global-spotify-remote-mode spotify-remote-mode
+ (lambda () (spotify-remote-mode 1)))
+(my-global-spotify-remote-mode 1)
+
+
 ;;
 ;;:   LANGUAGES
 ;;
