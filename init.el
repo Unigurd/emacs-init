@@ -103,8 +103,8 @@
 (defalias 'list-buffers 'ibuffer)
 
 ;; easy keys to split window. Key based on ErgoEmacs keybinding
-(global-set-key (kbd "M-2") 'delete-window)        ; close current pane
-(global-set-key (kbd "M-3") 'delete-other-windows) ; expand current pane
+(global-set-key (kbd "M-2") 'delete-other-windows) ; expand current pane
+(global-set-key (kbd "M-3") 'delete-window)        ; close current pane
 (global-set-key (kbd "M-4") 'split-window-right)   ; split pane left/right
 (global-set-key (kbd "M-5") 'split-window-below)   ; split pane top/bottom
 
@@ -147,6 +147,12 @@
         (insert text)))))
 
 
+;; Switch to other buffer wtihout fanfare
+;; Would be nice to go through the buffer list like tabs in
+(defun switch-to-other-buffer ()
+  (interactive)
+  (switch-to-buffer (other-buffer)))
+(global-set-key (kbd "C-<tab>") 'switch-to-other-buffer)
 
 
 ;;
