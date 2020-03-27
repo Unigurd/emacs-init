@@ -1,8 +1,3 @@
-(setq user-init-file "/home/sigurd/.emacs.d/init.el")
-;;; Initialize MELPA
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
-
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
@@ -26,7 +21,7 @@
  '(haskell-process-suggest-remove-import-lines t)
  '(package-selected-packages
    (quote
-    (ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode)))
+    (use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode)))
  '(rainbow-delimiters-max-face-count 8)
  '(send-mail-function (quote smtpmail-send-it))
  '(tramp-syntax (quote ftp)))
@@ -119,7 +114,8 @@
   "Disable `show-trailing-whitespace' in selected modes."
   (when (derived-mode-p 'shell-mode
                         'eww-mode
-                        'rc-irc-mode)
+                        'rc-irc-mode
+                        'comint-mode)
     (setq show-trailing-whitespace nil)))
 
 (add-hook 'after-change-major-mode-hook
@@ -159,25 +155,37 @@
 ;;:   PACKAGES
 ;;
 
-(require 'tramp)
-;(set-variable tramp-syntax "ftp")
+;;; Initialize MELPA
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
 
 
-;; Magit
-(require 'magit)
+;; Use-package
+(eval-when-compile
+  (require 'use-package))
+
+
+;; Sometimes Custom changes the value of tramp-syntax from this
+;; in the preamble. Uncomment if appropriate.
+;; (set-variable tramp-syntax "ftp")
+
 
 ;; ace-window
-(require 'ace-window)
-(global-set-key (kbd "M-o") 'ace-window)
-(setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+(use-package ace-window
+  :config
+  (bind-key (kbd "M-o") 'ace-window)
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
+
 
 ;; Evil-mode
-(add-to-list 'load-path "~/.emacs.d/evil")
-(require 'evil)
-(add-hook 'evil-mode-hook (lambda () (local-set-key (kbd "<tab>") 'indent-for-tab-command)))
+(use-package evil
+  :init
+  (add-to-list 'load-path "~/.emacs.d/evil")
+  :config
+  (add-hook 'evil-mode-hook (lambda () (local-set-key (kbd "<tab>") 'indent-for-tab-command))))
 
 ;; Normal emacs indenting
-;; Currently is active in too many modes, like *Help* buffers
 (evil-global-set-key 'normal (kbd "<tab>") 'indent-for-tab-command)
 (evil-global-set-key 'insert (kbd "<tab>") 'indent-for-tab-command)
 
@@ -203,38 +211,30 @@
 (evil-mode 1)
 
 ;; rainbow
-(require 'rainbow-delimiters)
-(require 'rainbow-blocks)
+(use-package rainbow-blocks)
+(use-package rainbow-delimiters
+  :config
+  ;; rainbow-delimiters automatisk paa
+  (define-globalized-minor-mode my-global-rainbow-delimiters-mode rainbow-delimiters-mode
+    (lambda () (rainbow-delimiters-mode 1)))
+  (my-global-rainbow-delimiters-mode 1)
+  )
 
-;; rainbow-delimiters automatisk paa
-(define-globalized-minor-mode my-global-rainbow-delimiters-mode rainbow-delimiters-mode
-  (lambda () (rainbow-delimiters-mode 1)))
-(my-global-rainbow-delimiters-mode 1)
 
 ;; org-mode
-(require 'org)
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
-(setq org-log-done t)
-;; The files in my global org thing
-(setq org-agenda-files (list "~/org/uni.org"
-                             "~/org/adult.org"
-                             "~/org/mailCalendar.org"))
+(use-package org
+  :config
+  (bind-key (kbd "C-c l") 'org-store-link)
+  (bind-key (kbd "C-c a") 'org-agenda)
+  ;; The files in my global org thing
+  (setq org-agenda-files (list "~/org/uni.org"
+                               "~/org/adult.org"
+                               "~/org/mailCalendar.org")))
 
-;;(eval-when-compile
-;;  (defvar url-http-method ())
-;;  (defvar url-http-data ())
-;;  (defvar url-http-extra-headers ())
-;;  (defvar oauth--token-data ())
-;;  (defvar url-callback-function ())
-;;  (defvar url-callback-arguments ()))
-
-;;;; oauth2 for org-caldav
-;;(require 'oauth2)
 
 ;; calendar
-(require 'calfw)
-(require 'calfw-org)
+(use-package calfw)
+(use-package calfw-org)
 
 ;;;;  both ways org-gcal sync
 ;;(load-file "~/.emacs.d/org-caldav/org-caldav.el")
@@ -280,46 +280,44 @@
 
 
 ;;Smart mode line
-(require 'smart-mode-line)
-(setq sml/mode-width 'full)
-(sml/setup)
-(sml/apply-theme 'dark)
-(put 'narrow-to-page 'disabled nil)
-(put 'set-goal-column 'disabled nil)
-(put 'upcase-region 'disabled nil)
-
+(use-package smart-mode-line
+  :config
+  (setq sml/mode-width 'full)
+  (sml/setup)
+  (sml/apply-theme 'dark)
+  (put 'narrow-to-page 'disabled nil)
+  (put 'set-goal-column 'disabled nil)
+  (put 'upcase-region 'disabled nil))
 
 ;; Spotify client
 ;; Downloaded from https://github.com/danielfm/spotify.el
-(add-to-list 'load-path "~/.emacs.d/manual/spotify")
-(require 'spotify)
 
+(use-package spotify
+  :init
+  ;; Note that the original spotify-connect.el used if-let*.
+  ;; I changed that because I couldn't find it
+  ;; Not sure if they do the same, but it seems to work fine.
+  (add-to-list 'load-path "~/.emacs.d/manual/spotify")
 
-;; Settings
+  :config
+  (setq spotify-oauth2-client-id     "a5358da03e3841f3af5f5ff0c14750ea")
+  (setq spotify-oauth2-client-secret "a10c46aa87bc4df5a73acf065740076d")
+  (define-key spotify-mode-map (kbd "C-c .") 'spotify-command-map)
 
-;; Note that the original spotify-connect.el used if-let*.
-;; I changed that because I couldn't find it
-;; Not sure if they do the same, but it seems to work fine.
+  ;; Connect allows to control Spotify on other devices
+  (setq spotify-transport 'connect)
 
-(setq spotify-oauth2-client-id     "a5358da03e3841f3af5f5ff0c14750ea")
-(setq spotify-oauth2-client-secret "a10c46aa87bc4df5a73acf065740076d")
-(define-key spotify-mode-map (kbd "C-c .") 'spotify-command-map)
-
-;; Connect allows to control Spotify on other devices
-(setq spotify-transport 'connect)
-
-;; Global spotify-remote-mode
-(define-globalized-minor-mode my-global-spotify-remote-mode spotify-remote-mode
- (lambda () (spotify-remote-mode 1)))
-;;(my-global-spotify-remote-mode 1)
-
+  ;; Global spotify-remote-mode
+  (define-globalized-minor-mode my-global-spotify-remote-mode spotify-remote-mode
+    (lambda () (spotify-remote-mode 1)))
+  )
 
 ;;
 ;;:   LANGUAGES
 ;;
 
 ;; futhark
-(require 'futhark-mode)
+(use-package futhark-mode)
 
 ;; Haskell
 (require 'haskell-mode)
