@@ -311,7 +311,7 @@
 ;; Global spotify-remote-mode
 (define-globalized-minor-mode my-global-spotify-remote-mode spotify-remote-mode
  (lambda () (spotify-remote-mode 1)))
-(my-global-spotify-remote-mode 1)
+;;(my-global-spotify-remote-mode 1)
 
 
 ;;
