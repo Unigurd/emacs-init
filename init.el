@@ -181,13 +181,24 @@
 (evil-global-set-key 'normal (kbd "<tab>") 'indent-for-tab-command)
 (evil-global-set-key 'insert (kbd "<tab>") 'indent-for-tab-command)
 
+;; Modes that should not start in evil
+(add-to-list 'evil-emacs-state-modes 'tabulated-list-mode)
+; Change help-mode like this because it already is in evil-motion-state-modes
+(evil-set-initial-state 'help-mode 'emacs)
+
 ;; Write the danish letters by s-(whatever their key would be)
-(evil-global-set-key 'insert (kbd "s-;") (generate-interactive-text-inserter ?æ))
-(evil-global-set-key 'insert (kbd "s-:") (generate-interactive-text-inserter ?Æ))
-(evil-global-set-key 'insert (kbd "s-'") (generate-interactive-text-inserter ?ø))
+(evil-global-set-key 'insert (kbd "s-;")  (generate-interactive-text-inserter ?æ))
+(evil-global-set-key 'insert (kbd "s-:")  (generate-interactive-text-inserter ?Æ))
+(evil-global-set-key 'insert (kbd "s-'")  (generate-interactive-text-inserter ?ø))
 (evil-global-set-key 'insert (kbd "s-\"") (generate-interactive-text-inserter ?Ø))
-(evil-global-set-key 'insert (kbd "s-[") (generate-interactive-text-inserter ?å))
-(evil-global-set-key 'insert (kbd "s-{") (generate-interactive-text-inserter ?Å))
+(evil-global-set-key 'insert (kbd "s-[")  (generate-interactive-text-inserter ?å))
+(evil-global-set-key 'insert (kbd "s-{")  (generate-interactive-text-inserter ?Å))
+(evil-global-set-key 'emacs  (kbd "s-;")  (generate-interactive-text-inserter ?æ))
+(evil-global-set-key 'emacs  (kbd "s-:")  (generate-interactive-text-inserter ?Æ))
+(evil-global-set-key 'emacs  (kbd "s-'")  (generate-interactive-text-inserter ?ø))
+(evil-global-set-key 'emacs  (kbd "s-\"") (generate-interactive-text-inserter ?Ø))
+(evil-global-set-key 'emacs  (kbd "s-[")  (generate-interactive-text-inserter ?å))
+(evil-global-set-key 'emacs  (kbd "s-{")  (generate-interactive-text-inserter ?Å))
 ;(define-key evil-motion-state-minor-mode-map (kbd "<tab>") 'indent-for-tab-command)
 (evil-mode 1)
 
