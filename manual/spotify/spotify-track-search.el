@@ -257,7 +257,7 @@ otherwise, it will be played without a context."
         (spotify-get-item-id user)
         1
         (lambda (json)
-          (if-let* ((choices (mapcar (lambda (a)
+          (if-let ((choices (mapcar (lambda (a) ;; Previously if-let*
                                        (list (spotify-get-item-name a) (spotify-get-item-id a)))
                                      (spotify-get-items json)))
                     (selected (completing-read "Select Playlist: " choices)))
