@@ -15,13 +15,15 @@
     ("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
  '(display-time-24hr-format t)
  '(doc-view-continuous t)
+ '(erc-hl-nicks-mode t)
+ '(erc-nick "Unigurd")
  '(haskell-process-auto-import-loaded-modules t)
  '(haskell-process-log t)
  '(haskell-process-suggest-hoogle-imports t)
  '(haskell-process-suggest-remove-import-lines t)
  '(package-selected-packages
    (quote
-    (use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode)))
+    (erc-hl-nicks use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode)))
  '(rainbow-delimiters-max-face-count 8)
  '(send-mail-function (quote smtpmail-send-it))
  '(tramp-syntax (quote ftp)))
@@ -115,7 +117,10 @@
   (when (derived-mode-p 'shell-mode
                         'eww-mode
                         'rc-irc-mode
-                        'comint-mode)
+                        'comint-mode
+                        'erc-mode
+                        'erc-list-mode
+                        'term-mode) ; Should that be changed to special-mode?
     (setq show-trailing-whitespace nil)))
 
 (add-hook 'after-change-major-mode-hook
@@ -150,6 +155,10 @@
   (switch-to-buffer (other-buffer)))
 (global-set-key (kbd "C-<tab>") 'switch-to-other-buffer)
 
+
+;; Press f3 in shell-command to insert current file name
+(define-key minibuffer-local-map [f3]
+  (lambda() (interactive) (insert (buffer-file-name (nth 1 (buffer-list))))))
 
 ;;
 ;;:   PACKAGES
@@ -191,6 +200,7 @@
 
 ;; Modes that should not start in evil
 (add-to-list 'evil-emacs-state-modes 'tabulated-list-mode)
+(add-to-list 'evil-emacs-state-modes 'dired-mode)
 ; Change help-mode like this because it already is in evil-motion-state-modes
 (evil-set-initial-state 'help-mode 'emacs)
 
@@ -226,6 +236,7 @@
   :config
   (bind-key (kbd "C-c l") 'org-store-link)
   (bind-key (kbd "C-c a") 'org-agenda)
+  (bind-key (kbd "C-c c") 'org-capture)
   ;; The files in my global org thing
   (setq org-agenda-files (list "~/org/uni.org"
                                "~/org/adult.org"
@@ -311,6 +322,35 @@
   (define-globalized-minor-mode my-global-spotify-remote-mode spotify-remote-mode
     (lambda () (spotify-remote-mode 1)))
   )
+
+;; ERC
+
+(add-to-list 'load-path "~/.emacs.d/manual/erc")
+(and
+ (require 'erc-highlight-nicknames)
+ (add-to-list 'erc-modules 'highlight-nicknames)
+ (erc-update-modules))
+
+;; (use-package erc
+;;   :custom
+;;   (erc-fill-static-center 22)
+
+;;   :config
+;;   (add-to-list 'load-path "~/.emacs.d/manual/erc")
+;;   (and
+;;      (require 'erc-highlight-nicknames)
+;;      (add-to-list 'erc-modules 'highlight-nicknames)
+;;      (erc-update-modules)))
+
+
+;(use-package erc-highlight-nicknames)
+
+;(use-package erc-hl-nicks
+;  :after erc)
+
+(use-package wiki-summary
+  :defer 1
+  :bind ("C-c W" . wiki-summary))
 
 ;;
 ;;:   LANGUAGES
