@@ -23,7 +23,7 @@
  '(haskell-process-suggest-remove-import-lines t)
  '(package-selected-packages
    (quote
-    (erc-hl-nicks use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode)))
+    (org-ref erc-hl-nicks use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode)))
  '(rainbow-delimiters-max-face-count 8)
  '(send-mail-function (quote smtpmail-send-it))
  '(tramp-syntax (quote ftp)))
@@ -153,12 +153,29 @@
 (defun switch-to-other-buffer ()
   (interactive)
   (switch-to-buffer (other-buffer)))
-(global-set-key (kbd "C-<tab>") 'switch-to-other-buffer)
+;;(global-set-key (kbd "C-<tab>") 'switch-to-other-buffer)
 
 
 ;; Press f3 in shell-command to insert current file name
 (define-key minibuffer-local-map [f3]
   (lambda() (interactive) (insert (buffer-file-name (nth 1 (buffer-list))))))
+
+;; Go up a directory from anywhere in a dired buffer
+(defun up-dir ()
+  (interactive)
+  (find-file (concat (if (listp dired-directory) (car dired-directory) dired-directory) "/..")))
+(defun up-dir-alternate ()
+  (interactive)
+  (find-alternate-file
+   (concat (if (listp dired-directory) (car dired-directory) dired-directory) "/..")))
+(bind-key (kbd "[") 'up-dir dired-mode-map)
+(bind-key (kbd "{") 'up-dir-alternate dired-mode-map)
+
+;; org mode
+(require 'org)
+;; (require 'ox-bibtex)
+(setq org-latex-pdf-process '("texi2dvi -p -b -V %f"))
+
 
 ;;
 ;;:   PACKAGES
