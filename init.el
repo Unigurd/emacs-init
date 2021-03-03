@@ -304,6 +304,9 @@
   (evil-set-initial-state 'prolog-inferior-mode 'emacs)
   (evil-set-initial-state 'eww-mode 'emacs)
   (evil-set-initial-state 'gud-mode 'emacs)
+  (evil-set-initial-state 'erc-mode 'emacs)
+  (evil-set-initial-state 'eshell-mode 'emacs)
+  (evil-set-initial-state 'xref--xref-buffer-mode 'emacs)
 
   ;; Write the danish letters by s-(whatever their key would be)
   (evil-global-set-key 'insert (kbd "s-;")  (generate-interactive-text-inserter ?æ))
@@ -320,6 +323,7 @@
   (evil-global-set-key 'emacs  (kbd "s-{")  (generate-interactive-text-inserter ?Å))
                                         ;(define-key evil-motion-state-minor-mode-map (kbd "<tab>") 'indent-for-tab-command)
   (evil-mode 1))
+
 
 ;; ace-window
 (use-package ace-window
