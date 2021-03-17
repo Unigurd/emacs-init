@@ -22,7 +22,7 @@
  '(org-agenda-files
    '("~/org/learn.org" "~/.emacs.d/elpa/org-ref-20200606.1848/org-ref.org" "~/org/uni.org" "~/org/adult.org" "~/org/mailCalendar.org"))
  '(package-selected-packages
-   '(slime cuda-mode lispy org-ref erc-hl-nicks use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode))
+   '(haskell-mode arduino-mode flycheck slime cuda-mode lispy org-ref erc-hl-nicks use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode))
  '(rainbow-delimiters-max-face-count 8)
  '(send-mail-function 'smtpmail-send-it))
 (custom-set-faces
@@ -72,7 +72,7 @@
 ;; displays the time and date in the mode line
 ;;(display-time)
 
-(global-set-key (kbd "M-O") 'kill-this-buffer)
+(global-set-key (kbd "C-x K") 'kill-this-buffer)
 
 ;; binds hippe-expand
 (global-set-key "\M- " 'hippie-expand)
@@ -212,7 +212,7 @@
 (define-key global-map (kbd "C-c h") 'comment-region)
 
 ;; Makes the M-& and M-! shells run interactively so .bashrc is read
-(setq shell-command-switch "-ic")
+;; (setq shell-command-switch "-ic")
 
 ;;
 ;;: gurd
@@ -250,6 +250,18 @@
 
 (global-set-key (kbd "C-S-x o") 'gurd-kill-other-buffer)
 
+;; Minesweeper
+(load-file "~/.emacs.d/git/mines/mines.elc")
+(add-hook 'mines-mode-hook
+          (lambda () (define-key evil-normal-state-local-map (kbd "SPC") 'mines-sweep)))
+(add-hook 'mines-mode-hook
+          (lambda () (define-key evil-normal-state-local-map (kbd "<tab>") 'mines-flag)))
+(add-hook 'mines-mode-hook
+          (lambda () (define-key evil-normal-state-local-map (kbd "<down-mouse-1>") 'ignore)))
+(add-hook 'mines-mode-hook
+          (lambda () (define-key evil-normal-state-local-map (kbd "<mouse-2>") 'ignore)))
+
+
 ;;
 ;;:   PACKAGES
 ;;
@@ -258,9 +270,6 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
-
-
-
 
 ;; Use-package
 (eval-when-compile
@@ -296,6 +305,7 @@
   (evil-set-initial-state 'haskell-compilation-mode 'emacs)
   (evil-set-initial-state 'haskell-error-mode 'emacs)
   (evil-set-initial-state 'inferior-haskell-mode 'emacs)
+  (evil-set-initial-state 'haskell-interactive-mode 'emacs)
   (evil-set-initial-state 'shell-mode 'emacs)
   (evil-set-initial-state 'Man-mode 'emacs)
   (evil-set-initial-state 'emacs-lisp-mode 'emacs)
@@ -328,7 +338,7 @@
 ;; ace-window
 (use-package ace-window
   :config
-  (bind-key (kbd "M-o") 'ace-window)
+  (bind-key (kbd "C-M-o") 'ace-window)
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
 
@@ -431,6 +441,8 @@
   :defer 1
   :bind ("C-c W" . wiki-summary))
 
+(setq flycheck-standard-error-navigation nil)
+
 
 ;;
 ;;:   LANGUAGES
@@ -457,7 +469,8 @@
   (setq tags-revert-without-query t)
   (define-key haskell-mode-map (kbd "C-c j") 'haskell-mode-jump-to-def)
   (define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile)
-  ;;:hook
+  (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
+  ;; :hook
   ;;(haskell-mode . haskell-collapse-mode)
   )
 
@@ -498,6 +511,7 @@
 
 ;; Emacs Lisp Elisp
 (add-hook 'emacs-lisp-mode-hook #'lispy-mode)
+(setq sentence-end-double-space nil)
 
 ;; Common Lisp
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
@@ -526,11 +540,10 @@
 ;; set python interpreter
 (setq python-shell-interpreter "python3")
 
-
-
-
-
-
+;; arduino
+(use-package arduino-mode
+  :config
+  (add-hook 'arduino-mode-hook #'flycheck-arduino-setup))
 
 
 
