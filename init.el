@@ -22,8 +22,9 @@
  '(org-agenda-files
    '("~/org/learn.org" "~/.emacs.d/elpa/org-ref-20200606.1848/org-ref.org" "~/org/uni.org" "~/org/adult.org" "~/org/mailCalendar.org"))
  '(package-selected-packages
-   '(haskell-mode arduino-mode flycheck slime cuda-mode lispy org-ref erc-hl-nicks use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode))
+   '(haskell-process haskell-interactive-mode haskell-cabal wiki-summary haskell-mode arduino-mode flycheck slime cuda-mode lispy org-ref erc-hl-nicks use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode))
  '(rainbow-delimiters-max-face-count 8)
+ '(safe-local-variable-values '((flycheck-mode . t)))
  '(send-mail-function 'smtpmail-send-it))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -171,6 +172,7 @@
 
 ;; org mode
 (use-package org
+  :ensure t
   :config
   (bind-key (kbd "C-c l") 'org-store-link)
   (bind-key (kbd "C-c a") 'org-agenda)
@@ -184,8 +186,7 @@
   (add-hook 'org-mode-hook 'auto-fill-mode)
   (org-babel-do-load-languages
    'org-babel-load-languages
-   (add-to-list 'org-babel-load-languages '(haskell . t)))
-  )
+   (add-to-list 'org-babel-load-languages '(haskell . t))))
 
 (use-package ox-beamer)
 (use-package ox-latex
@@ -202,8 +203,9 @@
 
 
 (use-package org-ref
+  :ensure t
   :config
-  ; (setq org-latex-pdf-process '("texi2dvi -p -b -V %f"))
+  ;; (setq org-latex-pdf-process '("texi2dvi -p -b -V %f"))
   (setq org-latex-pdf-process '("latexmk -shell-escape -bibtex -f -pdf %f")))
 
 
@@ -268,7 +270,7 @@
 
 ;;
 ;;:   PACKAGES
-;;
+;;[]
 
 ;;; Initialize MELPA
 (require 'package)
@@ -286,10 +288,16 @@
     (dired-hide-details-mode 1))
   (add-hook 'dired-mode-hook 'xah-dired-mode-setup))
 
-(use-package magit)
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
+(use-package magit
+  :ensure t)
 
 ;; Evil-mode
 (use-package evil
+  :ensure t
   :init
   (add-to-list 'load-path "~/.emacs.d/evil")
   :config
@@ -341,6 +349,7 @@
 
 ;; ace-window
 (use-package ace-window
+  :ensure t
   :config
   (bind-key (kbd "C-M-o") 'ace-window)
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
@@ -349,20 +358,23 @@
 
 
 ;; rainbow
-(use-package rainbow-blocks)
+(use-package rainbow-blocks
+  :ensure t)
 (use-package rainbow-delimiters
+  :ensure t
   :config
   ;; rainbow-delimiters automatisk paa
   (define-globalized-minor-mode my-global-rainbow-delimiters-mode rainbow-delimiters-mode
     (lambda () (rainbow-delimiters-mode 1)))
-  (my-global-rainbow-delimiters-mode 1)
-  )
+  (my-global-rainbow-delimiters-mode 1))
 
 
 
 ;; calendar
-(use-package calfw)
-(use-package calfw-org)
+(use-package calfw
+  :ensure t)
+(use-package calfw-org
+  :ensure t)
 
 ;;;;  both ways org-gcal sync
 ;;(load-file "~/.emacs.d/org-caldav/org-caldav.el")
@@ -409,6 +421,7 @@
 
 ;;Smart mode line
 (use-package smart-mode-line
+  :ensure t
   :config
   (setq sml/mode-width 'full)
   (sml/setup)
@@ -442,6 +455,7 @@
 ;  :after erc)
 
 (use-package wiki-summary
+  :ensure t
   :defer 1
   :bind ("C-c W" . wiki-summary))
 
@@ -454,6 +468,7 @@
 
 ;; futhark
 (use-package futhark-mode
+  :ensure t
   :init
   (load-file "~/.emacs.d/git/fucheck/fucheck.el")
   (add-hook 'futhark-mode-hook 'fucheck-init)
@@ -468,6 +483,7 @@
 
 ;; Haskell
 (use-package haskell-mode
+  :ensure t
   :config
   (setq haskell-tags-on-save t)
   (setq tags-revert-without-query t)
@@ -485,8 +501,7 @@
 (use-package haskell-interactive-mode
   :after (haskell-mode)
   :config
-  (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
-  )
+  (add-hook 'haskell-mode-hook 'interactive-haskell-mode))
 
 (use-package haskell-process
   :after (haskell-interactive-mode))
@@ -494,10 +509,11 @@
 ;;(define-key haskell-interactive-mode-map (kbd "C-`") 'haskell-interactive-bring)
 
 ;; shell
-(setq sh-basic-offset 2)
+(defvar sh-basic-offset 2)
 
 ;; Prolog
 (use-package ediprolog
+  :ensure t
   :config
   (global-set-key [f10] 'ediprolog-dwim)
   (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
@@ -524,7 +540,7 @@
 (add-hook 'lisp-mode-hook #'lispy-mode)
 
 ;; Replace "sbcl" with the path to your implementation
-(setq inferior-lisp-program "sbcl")
+(defvar inferior-lisp-program "sbcl")
 
 ;; C
 ;; use spaces instead of tabs, at least in cc mode
@@ -533,8 +549,8 @@
 (defvaralias 'c-basic-offset 'tab-width)
 
 ; c indentation is now 2 spaces, i think
-(setq c-default-style "bsd"
-      c-basic-offset 2)
+(defvar c-default-style "bsd")
+(setq c-basic-offset 2)
 
 ;; Java?
 ;;indents arguments to functions with long names better
@@ -544,10 +560,11 @@
 
 ;; Python
 ;; set python interpreter
-(setq python-shell-interpreter "python3")
+(defvar python-shell-interpreter "python3")
 
 ;; arduino
 (use-package arduino-mode
+  :ensure t
   :config
   (add-hook 'arduino-mode-hook #'flycheck-arduino-setup))
 
@@ -557,3 +574,5 @@
 (put 'dired-find-alternate-file 'disabled nil)
 (put 'scroll-left 'disabled nil)
 (put 'list-threads 'disabled nil)
+(provide 'init)
+;;; init.el ends here
