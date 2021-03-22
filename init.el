@@ -75,6 +75,14 @@
 
 (global-set-key (kbd "C-x K") 'kill-this-buffer)
 
+
+(defun gurd-kill-other-buffer ()
+  "Kill buffer in other window."
+  (interactive)
+  (kill-buffer (window-buffer (next-window))))
+
+(global-set-key (kbd "C-S-x k") 'gurd-kill-other-buffer)
+
 ;; binds hippe-expand
 (global-set-key "\M- " 'hippie-expand)
 
@@ -98,10 +106,14 @@
 (defalias 'list-buffers 'ibuffer)
 
 ;; easy keys to split window. Key based on ErgoEmacs keybinding
-(global-set-key (kbd "M-2") 'delete-other-windows) ; expand current pane
-(global-set-key (kbd "M-3") 'delete-window)        ; close current pane
-(global-set-key (kbd "M-4") 'split-window-right)   ; split pane left/right
-(global-set-key (kbd "M-5") 'split-window-below)   ; split pane top/bottom
+;; expand current pane
+(global-set-key (kbd "M-2") 'delete-other-windows)
+;; close current pane
+(global-set-key (kbd "M-3") 'delete-window)
+;; split pane left/right
+(global-set-key (kbd "M-4") 'split-window-right)
+;;  split pane top/bottom
+(global-set-key (kbd "M-5") 'split-window-below)
 
 ;; show trailing whitespace
 (setq-default show-trailing-whitespace t)
@@ -131,6 +143,8 @@
   "Revert buffer without confirmation."
   (interactive)
   (revert-buffer :ignore-auto :noconfirm))
+
+
 (global-set-key (kbd "C-c u") 'revert-buffer-no-confirm)
 
 
@@ -146,15 +160,14 @@
       (dotimes (i (prefix-numeric-value arg))
         (insert text)))))
 
-
 ;; Switch to other buffer wtihout fanfare
 ;; Would be nice to go through the buffer list like tabs in
 (defun switch-to-other-buffer ()
   (interactive)
   (switch-to-buffer (other-buffer)))
+
+
 ;;(global-set-key (kbd "C-<tab>") 'switch-to-other-buffer)
-
-
 ;; Press f3 in shell-command to insert current file name
 (define-key minibuffer-local-map [f3]
   (lambda() (interactive) (insert (buffer-file-name (nth 1 (buffer-list))))))
@@ -169,8 +182,8 @@
 ;;    (concat (if (listp dired-directory) (car dired-directory) dired-directory) "/..")))
 ;; (bind-key (kbd "[") 'up-dir dired-mode-map)
 ;; (bind-key (kbd "{") 'up-dir-alternate dired-mode-map)
-
 ;; org mode
+
 (use-package org
   :ensure t
   :config
@@ -187,8 +200,9 @@
   (org-babel-do-load-languages
    'org-babel-load-languages
    (add-to-list 'org-babel-load-languages '(haskell . t))))
-
 (use-package ox-beamer)
+
+
 (use-package ox-latex
   :after (org ox-beamer)
   :config
@@ -208,7 +222,6 @@
   ;; (setq org-latex-pdf-process '("texi2dvi -p -b -V %f"))
   (setq org-latex-pdf-process '("latexmk -shell-escape -bibtex -f -pdf %f")))
 
-
 (setq next-screen-context-lines 28)
 
 (define-key global-map (kbd "C-c h") 'comment-region)
@@ -227,12 +240,12 @@
         ((null type) (gurd-plist-get (not type) (cdr l)))
         (t (cons (car l) (gurd-plist-get (not type) (cdr l))))))
 
+
 (defun gurd-plist-map (f plist)
   (cond ((null plist) nil)
         ((and (consp plist) (consp (cdr plist)))
          (cons (car plist) (cons (funcall f (cadr plist)) (gurd-plist-map f (cddr plist)))))
         (t (error "gurd-plist-map given malformed plist"))))
-
 
 (defun gurd-plist-get-with-default (plist prop default)
   (let ((val (plist-get plist prop)))
@@ -245,12 +258,6 @@
          (cons (if (funcall p (car l)) (funcall f (car l)) (car l)) (gurd-map-these p f (cdr l))))
         ((null l) l)
         (t (signal 'wrong-type-argument (list 'listp l)))))
-
-(defun gurd-kill-other-buffer ()
-  (interactive)
-  (kill-buffer (window-buffer (next-window))))
-
-(global-set-key (kbd "C-S-x o") 'gurd-kill-other-buffer)
 
 ;; Minesweeper
 (let ((mines-dir "~/.emacs.d/git/mines/"))
