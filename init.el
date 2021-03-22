@@ -22,7 +22,7 @@
  '(org-agenda-files
    '("~/org/learn.org" "~/.emacs.d/elpa/org-ref-20200606.1848/org-ref.org" "~/org/uni.org" "~/org/adult.org" "~/org/mailCalendar.org"))
  '(package-selected-packages
-   '(haskell-process haskell-interactive-mode haskell-cabal wiki-summary haskell-mode arduino-mode flycheck slime cuda-mode lispy org-ref erc-hl-nicks use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode))
+   '(evil-lispy haskell-process haskell-interactive-mode haskell-cabal wiki-summary haskell-mode arduino-mode flycheck slime cuda-mode lispy org-ref erc-hl-nicks use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode))
  '(rainbow-delimiters-max-face-count 8)
  '(safe-local-variable-values '((flycheck-mode . t)))
  '(send-mail-function 'smtpmail-send-it))
@@ -320,7 +320,6 @@
   (evil-set-initial-state 'haskell-interactive-mode 'emacs)
   (evil-set-initial-state 'shell-mode 'emacs)
   (evil-set-initial-state 'Man-mode 'emacs)
-  (evil-set-initial-state 'emacs-lisp-mode 'emacs)
   (evil-set-initial-state 'lisp-mode 'emacs)
   (evil-set-initial-state 'help-mode 'emacs)
   (evil-set-initial-state 'prolog-inferior-mode 'emacs)
@@ -462,6 +461,9 @@
 (setq flycheck-standard-error-navigation nil)
 
 
+(use-package evil-lispy
+  :ensure t)
+
 ;;
 ;;:   LANGUAGES
 ;;
@@ -530,14 +532,14 @@
 ;;(add-hook 'fs-mode-hook #'smartparens-mode) ;Why this?
 
 ;; Emacs Lisp Elisp
-(add-hook 'emacs-lisp-mode-hook #'lispy-mode)
+(add-hook 'emacs-lisp-mode-hook #'evil-lispy-mode)
 (setq sentence-end-double-space nil)
 
 ;; Common Lisp
 (let ((slime-file "~/quicklisp/slime-helper.el"))
   (when (file-exists-p slime-file)
     (load (expand-file-name "~/quicklisp/slime-helper.el"))))
-(add-hook 'lisp-mode-hook #'lispy-mode)
+(add-hook 'lisp-mode-hook #'evil-lispy-mode)
 
 ;; Replace "sbcl" with the path to your implementation
 (defvar inferior-lisp-program "sbcl")
