@@ -251,7 +251,11 @@
 (global-set-key (kbd "C-S-x o") 'gurd-kill-other-buffer)
 
 ;; Minesweeper
-(load-file "~/.emacs.d/git/mines/mines.elc")
+(let ((mines-dir "~/.emacs.d/git/mines/"))
+  (when (file-exists-p (concat mines-dir "mines.el"))
+    (unless (file-exists-p (concat mines-dir "mines.elc"))
+      (byte-compile-file (concat mines-dir "mines.el")))
+    (load-file "~/.emacs.d/git/mines/mines.elc")))
 (add-hook 'mines-mode-hook
           (lambda () (define-key evil-normal-state-local-map (kbd "SPC") 'mines-sweep)))
 (add-hook 'mines-mode-hook
@@ -514,7 +518,9 @@
 (setq sentence-end-double-space nil)
 
 ;; Common Lisp
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
+(let ((slime-file "~/quicklisp/slime-helper.el"))
+  (when (file-exists-p slime-file)
+    (load (expand-file-name "~/quicklisp/slime-helper.el"))))
 (add-hook 'lisp-mode-hook #'lispy-mode)
 
 ;; Replace "sbcl" with the path to your implementation
