@@ -49,10 +49,6 @@
 ;;:   SETUP
 ;;
 
-;; currently only used for lexical-let somewhere later
-;; Should it be moved?
-(require 'cl)
-
 ;; Disable emacs startup-screen
 (setq inhibit-startup-screen t)
 
@@ -153,12 +149,9 @@
 ;; I'm using them for writing danish letters on
 ;; an english/american keyboard layout (I forget which)
 ;; in evil's insert state
-(defun generate-interactive-text-inserter (text)
-  (lexical-let ((text text))
-    (lambda (arg)
-      (interactive "P")
-      (dotimes (i (prefix-numeric-value arg))
-        (insert text)))))
+(defun gurd-text-inserter (text prefix)
+  () (dotimes (i (prefix-numeric-value prefix))
+    (insert text)))
 
 ;; Switch to other buffer wtihout fanfare
 ;; Would be nice to go through the buffer list like tabs in
@@ -336,20 +329,45 @@
   (evil-set-initial-state 'eshell-mode 'emacs)
   (evil-set-initial-state 'xref--xref-buffer-mode 'emacs)
 
+  ;; (interactive "P")
   ;; Write the danish letters by s-(whatever their key would be)
-  (evil-global-set-key 'insert (kbd "s-;")  (generate-interactive-text-inserter ?æ))
-  (evil-global-set-key 'insert (kbd "s-:")  (generate-interactive-text-inserter ?Æ))
-  (evil-global-set-key 'insert (kbd "s-'")  (generate-interactive-text-inserter ?ø))
-  (evil-global-set-key 'insert (kbd "s-\"") (generate-interactive-text-inserter ?Ø))
-  (evil-global-set-key 'insert (kbd "s-[")  (generate-interactive-text-inserter ?å))
-  (evil-global-set-key 'insert (kbd "s-{")  (generate-interactive-text-inserter ?Å))
-  (evil-global-set-key 'emacs  (kbd "s-;")  (generate-interactive-text-inserter ?æ))
-  (evil-global-set-key 'emacs  (kbd "s-:")  (generate-interactive-text-inserter ?Æ))
-  (evil-global-set-key 'emacs  (kbd "s-'")  (generate-interactive-text-inserter ?ø))
-  (evil-global-set-key 'emacs  (kbd "s-\"") (generate-interactive-text-inserter ?Ø))
-  (evil-global-set-key 'emacs  (kbd "s-[")  (generate-interactive-text-inserter ?å))
-  (evil-global-set-key 'emacs  (kbd "s-{")  (generate-interactive-text-inserter ?Å))
-                                        ;(define-key evil-motion-state-minor-mode-map (kbd "<tab>") 'indent-for-tab-command)
+  (evil-global-set-key 'insert (kbd "s-;")
+                       (lambda (prefix) (interactive "P")
+                         (gurd-text-inserter ?æ prefix)))
+  (evil-global-set-key 'insert (kbd "s-:")
+                       (lambda (prefix) (interactive "P")
+                         (gurd-text-inserter ?Æ prefix)))
+  (evil-global-set-key 'insert (kbd "s-'")
+                       (lambda (prefix) (interactive "P")
+                         (gurd-text-inserter ?ø prefix)))
+  (evil-global-set-key 'insert (kbd "s-\"")
+                       (lambda (prefix) (interactive "P")
+                         (gurd-text-inserter ?Ø prefix)))
+  (evil-global-set-key 'insert (kbd "s-[")
+                       (lambda (prefix) (interactive "P")
+                         (gurd-text-inserter ?å prefix)))
+  (evil-global-set-key 'insert (kbd "s-{")
+                       (lambda (prefix) (interactive "P")
+                         (gurd-text-inserter ?Å prefix)))
+  (evil-global-set-key 'emacs (kbd "s-;")
+                       (lambda (prefix) (interactive "P")
+                         (gurd-text-inserter ?æ prefix)))
+  (evil-global-set-key 'emacs (kbd "s-:")
+                       (lambda (prefix) (interactive "P")
+                         (gurd-text-inserter ?Æ prefix)))
+  (evil-global-set-key 'emacs (kbd "s-'")
+                       (lambda (prefix) (interactive "P")
+                         (gurd-text-inserter ?ø prefix)))
+  (evil-global-set-key 'emacs (kbd "s-\"")
+                       (lambda (prefix) (interactive "P")
+                         (gurd-text-inserter ?Ø prefix)))
+  (evil-global-set-key 'emacs (kbd "s-[")
+                       (lambda (prefix) (interactive "P")
+                         (gurd-text-inserter ?å prefix)))
+  (evil-global-set-key 'emacs (kbd "s-{")
+                       (lambda (prefix) (interactive "P")
+                         (gurd-text-inserter ?Å prefix)))
+
   (evil-mode 1))
 
 
