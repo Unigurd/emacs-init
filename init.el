@@ -253,11 +253,14 @@
         (t (signal 'wrong-type-argument (list 'listp l)))))
 
 ;; Minesweeper
-(let ((mines-dir "~/.emacs.d/git/mines/"))
-  (when (file-exists-p (concat mines-dir "mines.el"))
-    (unless (file-exists-p (concat mines-dir "mines.elc"))
-      (byte-compile-file (concat mines-dir "mines.el")))
-    (load-file "~/.emacs.d/git/mines/mines.elc")))
+(let* ((mines-dir "~/.emacs.d/git/mines/")
+       (mines-source-file (concat mines-dir "mines.el"))
+       (mines-compiled-file (concat mines-source-file "c")))
+  (when (file-exists-p mines-source-file)
+    (unless (or (file-exists-p (concat mines-dir "mines.elc"))
+                (file-newer-than-file-p mines-source-file mines-compiled-file))
+      (byte-compile-file mines-source-file))
+    (load-file mines-compiled-file)))
 (add-hook 'mines-mode-hook
           (lambda () (define-key evil-normal-state-local-map (kbd "SPC") 'mines-sweep)))
 (add-hook 'mines-mode-hook
