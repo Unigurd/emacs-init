@@ -219,8 +219,13 @@
 
 (define-key global-map (kbd "C-c h") 'comment-region)
 
-;; Makes the M-& and M-! shells run interactively so .bashrc is read
-;; (setq shell-command-switch "-ic")
+
+(let* ((version (progn
+                  (string-match "GNU Emacs \\([0-9]+\\.[0-9]+\\)" (version))
+                  (match-string 1 (version))))
+       (c-source-dir (concat "~/.emacs.d/c-source/emacs-" version "/src")))
+  (when (file-exists-p c-source-dir)
+    (setq find-function-C-source-directory c-source-dir)))
 
 ;;
 ;;: gurd
