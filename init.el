@@ -463,6 +463,8 @@
   (put 'upcase-region 'disabled nil))
 
 ;; ERC
+(setq erc-hide-list (append '("JOIN" "QUIT") erc-hide-list))
+
 ;; (add-to-list 'load-path "~/.emacs.d/manual/erc")
 ;; (and
 ;;  (require 'erc-highlight-nicknames)
