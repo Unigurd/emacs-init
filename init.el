@@ -231,6 +231,24 @@
 ;;: gurd
 ;;
 
+
+(defun hex-to-ascii (hex-string)
+  "Convert string HEX-STRING to its ascii representation."
+  (unless (= (mod (string-width hex-string) 2) 0)
+    (error "Uneven amount of hex digits"))
+  (let ((hex-to-num
+         (lambda (hex-char)
+           (pcase hex-char
+             (49 1) (50 2) (51 3) (52 4) (53 5) (54 6) (55 7) (56 8)
+             (57 9) (58 10) (59 11) (60 12) (61 13) (62 14) (63 15))))
+        (rev-ascii-list nil))
+    (dotimes (i (/ (string-width hex-string) 2))
+      (setf rev-ascii-list
+            (cons (+ (* 16 (funcall hex-to-num (aref hex-string (* 2 i))))
+                     (hex-to-num (aref hex-string (+ (* 2 i) 1))))
+                  rev-ascii-list)))
+    (concat (reverse rev-ascii-list))))
+
 (defun gurd-plist-get (type l)
   (cond ((null l) nil)
         ((equal type :properties) (gurd-plist-get t l))
