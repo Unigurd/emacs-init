@@ -22,10 +22,12 @@
  '(org-agenda-files
    '("~/org/learn.org" "~/.emacs.d/elpa/org-ref-20200606.1848/org-ref.org" "~/org/uni.org" "~/org/adult.org" "~/org/mailCalendar.org"))
  '(package-selected-packages
-   '(evil-lispy haskell-process haskell-interactive-mode haskell-cabal wiki-summary haskell-mode arduino-mode flycheck slime cuda-mode lispy org-ref erc-hl-nicks use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode))
+   '(forth-mode flycheck-haskell slime evil-lispy haskell-process haskell-interactive-mode haskell-cabal wiki-summary haskell-mode arduino-mode flycheck cuda-mode lispy org-ref erc-hl-nicks use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode))
  '(rainbow-delimiters-max-face-count 8)
  '(safe-local-variable-values '((flycheck-mode . t)))
- '(send-mail-function 'smtpmail-send-it))
+ '(send-mail-function 'smtpmail-send-it)
+ '(smtpmail-smtp-server "imap-mail.outlook.com")
+ '(smtpmail-smtp-service 25))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -44,6 +46,8 @@
  '(rainbow-delimiters-depth-9-face ((t (:inherit rainbow-delimiters-base-face :foreground "pale green")))))
 (put 'narrow-to-region 'disabled nil)
 
+
+(use-package forth-mode)
 
 ;;
 ;;:   SETUP
@@ -227,6 +231,11 @@
   (when (file-exists-p c-source-dir)
     (setq find-function-C-source-directory c-source-dir)))
 
+
+;; email smtp
+(setf mail-host-address "hotmail.com"
+      user-mail-address "Sigurddam@hotmail.com")
+
 ;;
 ;;: gurd
 ;;
@@ -354,6 +363,7 @@
   (evil-set-initial-state 'erc-mode 'emacs)
   (evil-set-initial-state 'eshell-mode 'emacs)
   (evil-set-initial-state 'xref--xref-buffer-mode 'emacs)
+  (evil-set-initial-state 'slime-repl-mode 'emacs)
 
   ;; (interactive "P")
   ;; Write the danish letters by s-(whatever their key would be)
@@ -481,7 +491,7 @@
   (put 'upcase-region 'disabled nil))
 
 ;; ERC
-(setq erc-hide-list (append '("JOIN" "QUIT") erc-hide-list))
+;; (setq erc-hide-list (append '("JOIN" "QUIT") erc-hide-list))
 
 ;; (add-to-list 'load-path "~/.emacs.d/manual/erc")
 ;; (and
@@ -546,6 +556,7 @@
   (define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile)
   (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
   ;; :hook
+  ;; (haskell-mode . flycheck-haskell-setup)
   ;;(haskell-mode . haskell-collapse-mode)
   )
 
@@ -574,6 +585,13 @@
   (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
   (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode)))
 
+(defun browse-swi-prolog (query)
+  "Search Swi-Prolog site for QUERY."
+  (interactive (list (let* ((default (thing-at-point 'word))
+                            (message (format "Browse Swi-Prolog (default %s): " default)))
+                       (read-string message nil nil default))))
+  (browse-url (format "https://www.swi-prolog.org/search?for=%s" query)))
+
 ;;(require 'ediprolog)
 ;;(global-set-key [f10] 'ediprolog-dwim)
 ;;
@@ -589,9 +607,9 @@
 (setq sentence-end-double-space nil)
 
 ;; Common Lisp
-(let ((slime-file "~/quicklisp/slime-helper.el"))
-  (when (file-exists-p slime-file)
-    (load (expand-file-name "~/quicklisp/slime-helper.el"))))
+;; (let ((slime-file "~/quicklisp/slime-helper.el"))
+;;   (when (file-exists-p slime-file)
+;;     (load (expand-file-name "~/quicklisp/slime-helper.el"))))
 (add-hook 'lisp-mode-hook #'evil-lispy-mode)
 
 ;; Replace "sbcl" with the path to your implementation
