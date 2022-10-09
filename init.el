@@ -1,53 +1,9 @@
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
-(unless package-archive-contents (package-refresh-contents))
+;;; -*- lexical-binding: t -*-
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default))
- '(display-time-24hr-format t)
- '(doc-view-continuous t)
- '(erc-hl-nicks-mode t)
- '(erc-nick "Unigurd")
- '(haskell-process-auto-import-loaded-modules t)
- '(haskell-process-log t)
- '(haskell-process-suggest-hoogle-imports t)
- '(haskell-process-suggest-remove-import-lines t)
- '(org-agenda-files
-   '("~/org/learn.org" "~/.emacs.d/elpa/org-ref-20200606.1848/org-ref.org" "~/org/uni.org" "~/org/adult.org" "~/org/mailCalendar.org"))
- '(package-selected-packages
-   '(forth-mode flycheck-haskell slime evil-lispy haskell-process haskell-interactive-mode haskell-cabal wiki-summary haskell-mode arduino-mode flycheck cuda-mode lispy org-ref erc-hl-nicks use-package ace-window futhark-mode buffer-move ein pdf-tools transient magit evil dante intero ediprolog ## gnu-elpa-keyring-update oauth2 org-gcal calfw-org calfw cider rainbow-blocks rainbow-delimiters rainbow-mode markdown-mode projectile clojure-mode better-defaults smartparens w3m fsharp-mode))
- '(rainbow-delimiters-max-face-count 8)
- '(safe-local-variable-values '((flycheck-mode . t)))
- '(send-mail-function 'smtpmail-send-it)
- '(smtpmail-smtp-server "imap-mail.outlook.com")
- '(smtpmail-smtp-service 25))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:background "black" :foreground "grey"))))
- '(fringe ((t (:background "black"))))
- '(rainbow-delimiters-depth-1-face ((t (:inherit rainbow-delimiters-base-face :foreground "red"))))
- '(rainbow-delimiters-depth-2-face ((t (:inherit rainbow-delimiters-base-face :foreground "dodger blue"))))
- '(rainbow-delimiters-depth-3-face ((t (:inherit rainbow-delimiters-base-face :foreground "orange"))))
- '(rainbow-delimiters-depth-4-face ((t (:inherit rainbow-delimiters-base-face :foreground "green"))))
- '(rainbow-delimiters-depth-5-face ((t (:inherit rainbow-delimiters-base-face :foreground "magenta"))))
- '(rainbow-delimiters-depth-6-face ((t (:inherit rainbow-delimiters-base-face :foreground "light sky blue"))))
- '(rainbow-delimiters-depth-7-face ((t (:inherit rainbow-delimiters-base-face :foreground "peru"))))
- '(rainbow-delimiters-depth-8-face ((t (:inherit rainbow-delimiters-base-face :foreground "cyan"))))
- '(rainbow-delimiters-depth-9-face ((t (:inherit rainbow-delimiters-base-face :foreground "pale green")))))
-(put 'narrow-to-region 'disabled nil)
-
-
-(use-package forth-mode)
+;;; Code:
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
+;; (use-package forth-mode)
 
 ;;
 ;;:   SETUP
@@ -148,6 +104,13 @@
 (global-set-key (kbd "C-c u") 'revert-buffer-no-confirm)
 
 
+;; Make marks nicer
+(setf set-mark-command-repeat-pop t
+      mark-ring-max 32
+      global-mark-ring-max 32)
+
+
+
 ;; Generates commands that writes a specific piece of text
 ;; Doesn't handle sticky properties, whatever that is
 ;; I'm using them for writing danish letters on
@@ -155,7 +118,7 @@
 ;; in evil's insert state
 (defun gurd-text-inserter (text prefix)
   () (dotimes (i (prefix-numeric-value prefix))
-    (insert text)))
+       (insert text)))
 
 ;; Switch to other buffer wtihout fanfare
 ;; Would be nice to go through the buffer list like tabs in
@@ -199,6 +162,8 @@
    (add-to-list 'org-babel-load-languages '(haskell . t))))
 (use-package ox-beamer)
 
+(use-package latex
+  :ensure auctex)
 
 (use-package ox-latex
   :after (org ox-beamer)
@@ -235,6 +200,10 @@
 ;; email smtp
 (setf mail-host-address "hotmail.com"
       user-mail-address "Sigurddam@hotmail.com")
+
+(setf user-full-name "Sigurd Dam Sonniks")
+
+(use-package flycheck)
 
 ;;
 ;;: gurd
@@ -330,6 +299,11 @@
 (use-package magit
   :ensure t)
 
+(use-package undo-tree
+  :ensure t
+  :config
+  (global-undo-tree-mode))
+
 ;; Evil-mode
 (use-package evil
   :ensure t
@@ -355,7 +329,6 @@
   (evil-set-initial-state 'haskell-interactive-mode 'emacs)
   (evil-set-initial-state 'shell-mode 'emacs)
   (evil-set-initial-state 'Man-mode 'emacs)
-  (evil-set-initial-state 'lisp-mode 'emacs)
   (evil-set-initial-state 'help-mode 'emacs)
   (evil-set-initial-state 'prolog-inferior-mode 'emacs)
   (evil-set-initial-state 'eww-mode 'emacs)
@@ -364,6 +337,8 @@
   (evil-set-initial-state 'eshell-mode 'emacs)
   (evil-set-initial-state 'xref--xref-buffer-mode 'emacs)
   (evil-set-initial-state 'slime-repl-mode 'emacs)
+  (evil-set-initial-state 'inferior-python-mode 'emacs)
+  (evil-set-initial-state 'geiser-repl-mode 'emacs)
 
   ;; (interactive "P")
   ;; Write the danish letters by s-(whatever their key would be)
@@ -407,6 +382,12 @@
   (evil-mode 1))
 
 
+;; persistent-scratch buffer *scratch*
+(use-package persistent-scratch
+  :config
+  (persistent-scratch-setup-default))
+
+
 ;; ace-window
 (use-package ace-window
   :ensure t
@@ -414,12 +395,12 @@
   (bind-key (kbd "C-M-o") 'ace-window)
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
-
-
-
 ;; rainbow
 (use-package rainbow-blocks
   :ensure t)
+
+
+
 (use-package rainbow-delimiters
   :ensure t
   :config
@@ -428,11 +409,10 @@
     (lambda () (rainbow-delimiters-mode 1)))
   (my-global-rainbow-delimiters-mode 1))
 
-
-
 ;; calendar
 (use-package calfw
   :ensure t)
+
 (use-package calfw-org
   :ensure t)
 
@@ -447,9 +427,9 @@
 ;;                             "~/org/adult.org")
 ;;      org-caldav-inbox "~/org/mailCalendar.org"
 ;;      org-icalendar-timezone "Europe/Copenhagen")
-
 ;;change w3m user-agent to android
 ;; But why?
+
 (setq w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.")
 
 ;; Back when I didn't use the mouse :')
@@ -458,6 +438,7 @@
   :global t
   :lighter " 🐭"
   :keymap (make-sparse-keymap))
+
 
 (dolist (type '(mouse down-mouse drag-mouse
                       double-mouse triple-mouse))
@@ -470,14 +451,22 @@
 
 
 ;; ido-mode auto paa
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode 1)
-(setq ido-create-new-buffer 'always)
-(defadvice ido-switch-buffer (around no-confirmation activate)
-  (let ((confirm-nonexistent-file-or-buffer nil))
-    ad-do-it))
-(setq ido-auto-merge-work-directories-length -1)
+;; (setq ido-enable-flex-matching t)
+;; (setq ido-everywhere t)
+;; (ido-mode 1)
+;; (setq ido-create-new-buffer 'always)
+;; (defadvice ido-switch-buffer (around no-confirmation activate)
+;;   (let ((confirm-nonexistent-file-or-buffer nil))
+;;     ad-do-it))
+;; (setq ido-auto-merge-work-directories-length -1)
+;; helm
+
+(use-package helm
+  :bind (("M-x" . helm-M-x)
+         ("C-x r b" . helm-filtered-bookmarks)
+         ("C-x C-f" . helm-find-files))
+  :config
+  (helm-mode))
 
 ;;Smart mode line
 (use-package smart-mode-line
@@ -503,13 +492,13 @@
 ;;   :custom
 ;;   (erc-fill-static-center 22)
 
+
 ;;   :config
 ;;   (add-to-list 'load-path "~/.emacs.d/manual/erc")
 ;;   (and
 ;;      (require 'erc-highlight-nicknames)
 ;;      (add-to-list 'erc-modules 'highlight-nicknames)
 ;;      (erc-update-modules)))
-
 
 ;(use-package erc-highlight-nicknames)
 
@@ -521,28 +510,30 @@
   :defer 1
   :bind ("C-c W" . wiki-summary))
 
-(setq flycheck-standard-error-navigation nil)
 
+(setq flycheck-standard-error-navigation nil)
 
 (use-package evil-lispy
   :ensure t)
+
+
 
 ;;
 ;;:   LANGUAGES
 ;;
 
 ;; futhark
-(use-package futhark-mode
-  :ensure t
-  :init
-  (load-file "~/.emacs.d/git/fucheck/fucheck.el")
-  (add-hook 'futhark-mode-hook 'fucheck-init)
-  :bind
-  ("C-c f"         . 'fucheck-next-test)
-  ("C-c <tab>"     . 'fucheck-collapse-test)
-  ("C-c C-c <tab>" . 'fucheck-collapse-all-tests)
-  ("C-c t"         . 'fucheck-test-region)
-  ("C-c C-c t"     . 'fucheck-test-all))
+;; (use-package futhark-mode
+;;   :ensure t
+;;   :init
+;;   (load-file "~/.emacs.d/git/fucheck/fucheck.el")
+;;   (add-hook 'futhark-mode-hook 'fucheck-init)
+;;   :bind
+;;   ("C-c f"         . 'fucheck-next-test)
+;;   ("C-c <tab>"     . 'fucheck-collapse-test)
+;;   ("C-c C-c <tab>" . 'fucheck-collapse-all-tests)
+;;   ("C-c t"         . 'fucheck-test-region)
+;;   ("C-c C-c t"     . 'fucheck-test-all))
 
 
 
@@ -603,17 +594,195 @@
 ;;(add-hook 'fs-mode-hook #'smartparens-mode) ;Why this?
 
 ;; Emacs Lisp Elisp
+(defun earmuffs (&optional pos)
+  "Transforms SOME-SYMBOL to *SOME-SYMBOL* or the other way around.
+Uses the symbol at *POS* if it is non-nil and symbol at point otherwise."
+  (interactive)
+  (save-excursion
+    (if pos (goto-char pos))
+    (destructuring-bind (start . end) (bounds-of-thing-at-point 'symbol)
+      (if (and (eql ?* (char-after start))
+               (eql ?* (char-before end)))
+          (progn (goto-char end)
+                 (delete-char -1)
+                 (goto-char start)
+                 (delete-char 1))
+        (goto-char end)
+        (insert-char ?*)
+        (goto-char start)
+        (insert-char ?*)))))
+
+(define-key emacs-lisp-mode-map (kbd "C-c *") 'earmuffs)
+
 (add-hook 'emacs-lisp-mode-hook #'evil-lispy-mode)
 (setq sentence-end-double-space nil)
 
 ;; Common Lisp
-;; (let ((slime-file "~/quicklisp/slime-helper.el"))
-;;   (when (file-exists-p slime-file)
-;;     (load (expand-file-name "~/quicklisp/slime-helper.el"))))
-(add-hook 'lisp-mode-hook #'evil-lispy-mode)
+(use-package slime
+  :config
+  (let ((slime-file "~/quicklisp/slime-helper.el"))
+    (when (file-exists-p slime-file)
+      (load (expand-file-name "~/quicklisp/slime-helper.el"))))
+
+  (defun gurd-slime-inspector-link-finder (limit)
+    (let ((match (text-property-search-forward 'slime-part-number)))
+      (when (and match (> limit (prop-match-end match)))
+        (set-match-data (list (prop-match-beginning match) (prop-match-end match))))
+      match))
+
+  (font-lock-add-keywords 'slime-inspector-mode `((,#'gurd-slime-inspector-link-finder . font-lock-builtin-face)))
+
+  (advice-add 'slime-sexp-at-point :filter-return
+              (lambda (arg)
+                "Prepend ' to read sexp if current-prefix-arg."
+                ;; TODO: find way to check if some ancestor fun is called interactively
+                (if current-prefix-arg
+                    (concat "'" arg)
+                  arg)))
+  (setf slime-scratch-file "~/.emacs.d/slime-scratch")
+
+  (add-hook 'lisp-mode-hook #'evil-lispy-mode)
+  :bind
+  ("C-c *" . earmuffs))
 
 ;; Replace "sbcl" with the path to your implementation
-(defvar inferior-lisp-program "sbcl")
+(setf inferior-lisp-program "sbcl")
+
+
+
+
+
+
+;; scheme
+(use-package geiser
+  :config
+  (add-hook 'scheme-mode-hook #'evil-lispy-mode)
+  ;; Manual specification of indentation of my macros.
+  (mapc (lambda (m)
+          (put m 'scheme-indent-function 1))
+        '(data
+          gen-stack-top
+          dotimes
+          define-lookup
+          define-pattern-expander
+          match
+          ematch
+          multi-match
+          multi-ematch
+          define-test
+          check
+          check!
+          forall
+          counter-example
+          with-gensyms))
+
+  (put 'with-sizes 'scheme-indent-function 2)
+
+  ;; Functions for converting checks to tests in scheme.
+  (defun gurd-scheme-result (struc)
+    "Return the result of a scheme computation represented by STRUC or nil if it failed."
+    (and (consp struc)
+         (consp (car struc))
+         (eq 'result (caar struc))
+         (cadar struc)))
+
+  (defun gurd-geiser-check->test (check start end)
+    "Convert a scheme (check ...) expressions into a (test name ...) expression.
+CHECK is the string representing the check,and it should be located in
+the buffer from START to END. name is provided interactively."
+    ;; Ensure (check ...) succeeds
+    (let ((check-result (geiser-eval--send/wait `(:eval (:scm ,check)) 500)))
+      (if (not (gurd-scheme-result check-result))
+          (message "Check failed")
+        ;; Read name of test from minibuffer
+        ;; and convert check to test
+        (let* ((name (read-from-minibuffer "Test name: "))
+               (test (gurd-scheme-result
+                      (geiser-eval--send/wait
+                       `(:eval (:scm ,(format "(check->test '%s '%s)"
+                                              name
+                                              check)))))))
+          ;; Ensure conversion succeeded
+          (if (not test)
+              (message "Conversion to test failed")
+            ;; Insert test
+            (delete-region start end)
+            (insert (concat test "\n"))
+            (geiser-eval-definition))))))
+
+  (defun gurd-geiser--send-string (compile str and-go wrap &optional nomsg)
+    (let* ((wrapped (if wrap (geiser-debug--wrap-region str) str))
+           (code `(,(if compile :comp :eval) (:scm ,wrapped)))
+           (cont (lambda (ret)
+                   (let ((res (geiser-eval--retort-result-str ret nil))
+                         (err (geiser-eval--retort-error ret))
+                         (scstr (geiser-syntax--scheme-str str)))
+                     (when and-go (funcall and-go))
+                     (when (not err)
+                       ;; Commented because I don't know what
+                       ;; it does but seems unnecessary.
+                       ;; (save-excursion
+                       ;;   (goto-char (/ (+ end start) 2))
+                       ;;   (geiser-autodoc--clean-cache))
+                       (unless nomsg
+                         (save-match-data
+                           (when (string-match "\\(?:[ \t\n\r]+\\)\\'" res)
+                             (setq res (replace-match "" t t res))))
+                         (message "%s" res)))
+                     (geiser-debug--display-retort scstr ret res)))))
+      (geiser-eval--send code cont (current-buffer))))
+
+  (defvar gurd-geiser-minibuffer-history nil
+    "Minibuffer history used in gurd-geiser--send-minibuffer")
+
+  (defun gurd-geiser--send-minibuffer (str)
+    "Stolen from geiser-debug--send-region, but sends from minibuffer instead."
+    (interactive (list (read-string "Eval: " nil 'gurd-geiser-minibuffer-history)))
+    (gurd-geiser--send-string nil str nil t nil))
+
+  (defun gurd-geiser-test-dwim ()
+    "Perform one of these actions depending on context.
+If in a check expression, call GURD-GEISER-CHECK->TEST.
+If in a define expression the test with the same name as the defined object.
+If in a define-test expression, run that test.
+If in a test expression, just run that.
+Otherwise prompt for a test to run."
+    ;; TODO: see if geiser can prettify generated test definition.
+    ;; TODO: think about whether prefix arg should run (test-all).
+    ;; TODO: Save test when run on a define-test.
+    (interactive)
+    (save-excursion
+      ;; Get start and end of top-level expression
+      (let ((end (progn (end-of-defun) (point)))
+            (start (progn (beginning-of-defun) (point))))
+        ;; Check for balanced parens
+        (save-restriction
+          (narrow-to-region start end)
+          (check-parens))
+        (let* ((str (buffer-substring-no-properties start end))
+               (scm-car (gurd-scheme-result (geiser-eval--send/wait `(:eval (:scm ,(concat "(car '" str ")")) 500)))))
+          ;; Ensure in (check ...) expression
+          (cond ((string= "check" scm-car)
+                 (gurd-geiser-check->test str start end))
+                ((or (string= "define" scm-car)
+                     (string= "define-test" scm-car))
+                 (let ((test-name (gurd-scheme-result
+                                   (geiser-eval--send/wait
+                                    `(:eval (:scm ,(concat "(defined-name '" str ")"))) 500))))
+                   (if test-name
+                       (gurd-geiser--send-string nil (concat "(test '" test-name ")") nil nil)
+                     (message "Malformed define/define-test."))))
+                ((string= "test" scm-car)
+                 (gurd-geiser--send-string nil str nil nil))
+                (t
+                 (gurd-geiser--send-string nil (concat "(test '" (read-string "Run test: " nil nil) ")") nil nil)))))))
+
+
+  :bind (;; :map geiser-mode-map
+         ("C-c t" . gurd-geiser-test-dwim)
+         ("C-c e" . gurd-geiser--send-minibuffer)))
+
+
 
 ;; C
 ;; use spaces instead of tabs, at least in cc mode
@@ -649,3 +818,4 @@
 (put 'list-threads 'disabled nil)
 (provide 'init)
 ;;; init.el ends here
+
