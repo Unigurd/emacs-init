@@ -1,8 +1,22 @@
 ;;; -*- lexical-binding: t -*-
 
 ;;; Code:
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
+(defconst custom-file (expand-file-name "custom.el" user-emacs-directory))
+(load custom-file t)
+
+;;
+;;:   PACKAGES
+;;
+
+;;; Initialize MELPA
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(package-initialize)
+
+;; use-package
+(eval-when-compile
+  (require 'use-package))
+
 ;; (use-package forth-mode)
 
 ;;
@@ -276,14 +290,12 @@
 ;;:   PACKAGES
 ;;[]
 
-;;; Initialize MELPA
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
-
-;; Use-package
-(eval-when-compile
-  (require 'use-package))
+(use-package helm
+  :bind (("M-x" . helm-M-x)
+         ("C-x r b" . helm-filtered-bookmarks)
+         ("C-x C-f" . helm-find-files))
+  :config
+  (helm-mode))
 
 (use-package dired
   :config
@@ -461,12 +473,6 @@
 ;; (setq ido-auto-merge-work-directories-length -1)
 ;; helm
 
-(use-package helm
-  :bind (("M-x" . helm-M-x)
-         ("C-x r b" . helm-filtered-bookmarks)
-         ("C-x C-f" . helm-find-files))
-  :config
-  (helm-mode))
 
 ;;Smart mode line
 (use-package smart-mode-line
