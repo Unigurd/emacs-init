@@ -662,6 +662,8 @@ Uses the symbol at *POS* if it is non-nil and symbol at point otherwise."
 
 
 ;; scheme
+(unless (package-installed-p 'geiser)
+  (package-install 'geiser))
 (use-package geiser
   :config
   (add-hook 'scheme-mode-hook #'evil-lispy-mode)
@@ -789,6 +791,12 @@ Otherwise prompt for a test to run."
   :bind (;; :map geiser-mode-map
          ("C-c t" . gurd-geiser-test-dwim)
          ("C-c e" . gurd-geiser--send-minibuffer)))
+
+
+(unless (package-installed-p 'geiser-guile)
+  (package-install 'geiser-guile))
+(use-package geiser-guile
+  :after geiser)
 
 
 
