@@ -2,22 +2,27 @@
 
 ;;; Code:
 (defconst custom-file (expand-file-name "custom.el" user-emacs-directory))
-(load custom-file t)
 
 ;;
 ;;:   PACKAGES
 ;;
 
 ;;; Initialize MELPA
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(package-initialize)
+;; Also eval during compilation so melpa is accessible
+;; when use-package is required so it can be installed
+(eval-and-compile
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+  (package-initialize))
 
 ;; use-package
 (eval-when-compile
+  (unless (package-installed-p 'use-package)
+    (package-install 'use-package))
   (require 'use-package))
 
-;; (use-package forth-mode)
+
+(load custom-file t)
 
 ;;
 ;;:   SETUP
@@ -288,7 +293,12 @@
 
 ;;
 ;;:   PACKAGES
-;;[]
+;;
+
+;; persistent-scratch doesn't get properly installed
+;; with use-package
+(unless (package-installed-p 'helm)
+  (package-install 'helm))
 
 (use-package helm
   :bind (("M-x" . helm-M-x)
@@ -395,6 +405,11 @@
 
 
 ;; persistent-scratch buffer *scratch*
+;; persistent-scratch doesn't get properly installed
+;; with use-package
+(unless (package-installed-p 'persistent-scratch)
+  (package-install 'persistent-scratch))
+
 (use-package persistent-scratch
   :config
   (persistent-scratch-setup-default))
@@ -460,19 +475,6 @@
       (let ((k (format "%s%s-%s" prefix type n)))
         (define-key disable-mouse-mode-map
           (vector (intern k)) #'ignore)))))
-
-
-;; ido-mode auto paa
-;; (setq ido-enable-flex-matching t)
-;; (setq ido-everywhere t)
-;; (ido-mode 1)
-;; (setq ido-create-new-buffer 'always)
-;; (defadvice ido-switch-buffer (around no-confirmation activate)
-;;   (let ((confirm-nonexistent-file-or-buffer nil))
-;;     ad-do-it))
-;; (setq ido-auto-merge-work-directories-length -1)
-;; helm
-
 
 ;;Smart mode line
 (use-package smart-mode-line
