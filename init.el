@@ -3,6 +3,12 @@
 ;;; Code:
 (defconst custom-file (expand-file-name "custom.el" user-emacs-directory))
 
+(setf custom-theme-directory (expand-file-name "custom-themes/" user-emacs-directory))
+
+(load-theme 'gurd t)
+
+(use-package nix-mode)
+
 ;;
 ;;:   PACKAGES
 ;;
@@ -27,6 +33,12 @@
 ;;
 ;;:   SETUP
 ;;
+
+
+(add-to-list 'load-path "/home/gurd/emacs/")
+(let ((default-directory "/home/gurd/emacs/"))
+  (normal-top-level-add-subdirs-to-load-path))
+
 
 ;; Disable emacs startup-screen
 (setq inhibit-startup-screen t)
@@ -224,6 +236,11 @@
 
 (use-package flycheck)
 
+
+(setq kill-buffer-query-functions
+      (remq 'process-kill-buffer-query-function
+            kill-buffer-query-functions))
+
 ;;
 ;;: gurd
 ;;
@@ -236,13 +253,14 @@
   (let ((hex-to-num
          (lambda (hex-char)
            (pcase hex-char
-             (49 1) (50 2) (51 3) (52 4) (53 5) (54 6) (55 7) (56 8)
-             (57 9) (58 10) (59 11) (60 12) (61 13) (62 14) (63 15))))
+             (48 0) (49 1) (50 2) (51 3) (52 4) (53 5) (54 6) (55 7) (56 8)
+             (57 9) (97 10) (98 11) (99 12) (100 13) (101 14) (102 15)
+             (_ (throw 'char-not-valid-hex nil)))))
         (rev-ascii-list nil))
     (dotimes (i (/ (string-width hex-string) 2))
       (setf rev-ascii-list
             (cons (+ (* 16 (funcall hex-to-num (aref hex-string (* 2 i))))
-                     (hex-to-num (aref hex-string (+ (* 2 i) 1))))
+                     (funcall hex-to-num (aref hex-string (+ (* 2 i) 1))))
                   rev-ascii-list)))
     (concat (reverse rev-ascii-list))))
 
@@ -324,13 +342,15 @@
 (use-package undo-tree
   :ensure t
   :config
+  (setq undo-tree-history-directory-alist
+        `(("." . ,(file-name-concat user-emacs-directory ".cache" "undo-tree"))))
   (global-undo-tree-mode))
 
 ;; Evil-mode
 (use-package evil
   :ensure t
   :init
-  (add-to-list 'load-path "~/.emacs.d/evil")
+  (add-to-list 'load-path "/home/gurd/.emacs.d/evil")
   :config
   (add-hook 'evil-mode-hook (lambda () (local-set-key (kbd "<tab>") 'indent-for-tab-command)))
 
@@ -482,7 +502,6 @@
   :config
   (setq sml/mode-width 'full)
   (sml/setup)
-  (sml/apply-theme 'dark)
   (put 'narrow-to-page 'disabled nil)
   (put 'set-goal-column 'disabled nil)
   (put 'upcase-region 'disabled nil))
@@ -788,9 +807,24 @@ Otherwise prompt for a test to run."
                  (gurd-geiser--send-string nil (concat "(test '" (read-string "Run test: " nil nil) ")") nil nil)))))))
 
 
+  (defun gurd-geiser-restart-from-file (buf-name)
+    (interactive "b")
+    (let ((source-path (buffer-file-name (get-buffer buf-name))))
+      (map 'list
+           (lambda (some-buffer)
+             (when (and (buffer-name some-buffer)
+                        (string-match "\\*Geiser Guile REPL\\*.*"
+                                      (buffer-name some-buffer)))
+               (kill-buffer some-buffer)))
+           (buffer-list))
+      (geiser-repl-restart-repl)
+      (geiser-compile--file-op (file-local-name (expand-file-name source-path)) nil "Loading")))
+
+
   :bind (;; :map geiser-mode-map
          ("C-c t" . gurd-geiser-test-dwim)
-         ("C-c e" . gurd-geiser--send-minibuffer)))
+         ("C-c e" . gurd-geiser--send-minibuffer)
+         ("C-c r" . gurd-geiser-restart-from-file)))
 
 
 (unless (package-installed-p 'geiser-guile)
