@@ -139,14 +139,7 @@
 
 
 
-;; Switch to other buffer wtihout fanfare
-;; Would be nice to go through the buffer list like tabs in
-(defun switch-to-other-buffer ()
-  (interactive)
-  (switch-to-buffer (other-buffer)))
 
-
-;;(global-set-key (kbd "C-<tab>") 'switch-to-other-buffer)
 ;; Press f3 in shell-command to insert current file name
 (define-key minibuffer-local-map [f3]
   (lambda() (interactive) (insert (buffer-file-name (nth 1 (buffer-list))))))
