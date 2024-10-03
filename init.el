@@ -493,10 +493,6 @@
 
 
 
-(use-package wiki-summary
-  :ensure t
-  :defer 1
-  :bind ("C-c W" . wiki-summary))
 
 
 (setq flycheck-standard-error-navigation nil)
