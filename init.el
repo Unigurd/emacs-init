@@ -487,31 +487,11 @@
   (put 'set-goal-column 'disabled nil)
   (put 'upcase-region 'disabled nil))
 
-;; ERC
-;; (setq erc-hide-list (append '("JOIN" "QUIT") erc-hide-list))
-
-;; (add-to-list 'load-path "~/.emacs.d/manual/erc")
-;; (and
-;;  (require 'erc-highlight-nicknames)
-;;  (add-to-list 'erc-modules 'highlight-nicknames)
-;;  (erc-update-modules))
-
-;; (use-package erc
-;;   :custom
-;;   (erc-fill-static-center 22)
 
 
-;;   :config
-;;   (add-to-list 'load-path "~/.emacs.d/manual/erc")
-;;   (and
-;;      (require 'erc-highlight-nicknames)
-;;      (add-to-list 'erc-modules 'highlight-nicknames)
-;;      (erc-update-modules)))
 
-;(use-package erc-highlight-nicknames)
 
-;(use-package erc-hl-nicks
-;  :after erc)
+
 
 (use-package wiki-summary
   :ensure t
