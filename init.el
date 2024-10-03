@@ -91,13 +91,13 @@
 
 ;; easy keys to split window. Key based on ErgoEmacs keybinding
 ;; expand current pane
-(global-set-key (kbd "M-2") 'delete-other-windows)
+(global-set-key (kbd "C-M-3") 'delete-other-windows)
 ;; close current pane
-(global-set-key (kbd "M-3") 'delete-window)
+(global-set-key (kbd "C-M-#") 'delete-window)
 ;; split pane left/right
-(global-set-key (kbd "M-4") 'split-window-right)
+(global-set-key (kbd "C-M-2") 'split-window-right)
 ;;  split pane top/bottom
-(global-set-key (kbd "M-5") 'split-window-below)
+(global-set-key (kbd "C-M-@") 'split-window-below)
 
 ;; show trailing whitespace
 (setq-default show-trailing-whitespace t)
