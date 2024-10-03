@@ -506,20 +506,6 @@
 ;;:   LANGUAGES
 ;;
 
-;; futhark
-;; (use-package futhark-mode
-;;   :ensure t
-;;   :init
-;;   (load-file "~/.emacs.d/git/fucheck/fucheck.el")
-;;   (add-hook 'futhark-mode-hook 'fucheck-init)
-;;   :bind
-;;   ("C-c f"         . 'fucheck-next-test)
-;;   ("C-c <tab>"     . 'fucheck-collapse-test)
-;;   ("C-c C-c <tab>" . 'fucheck-collapse-all-tests)
-;;   ("C-c t"         . 'fucheck-test-region)
-;;   ("C-c C-c t"     . 'fucheck-test-all))
-
-
 (use-package nix-mode)
 
 ;; Haskell
