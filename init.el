@@ -9,7 +9,6 @@
 
 (load-theme 'gurd t)
 
-(use-package nix-mode)
 
 ;;
 ;;:   PACKAGES
@@ -564,6 +563,7 @@
 ;;   ("C-c C-c t"     . 'fucheck-test-all))
 
 
+(use-package nix-mode)
 
 ;; Haskell
 (use-package haskell-mode
