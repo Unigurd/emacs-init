@@ -73,9 +73,6 @@
 
 (global-set-key (kbd "C-S-x k") 'gurd-kill-other-buffer)
 
-;; Displays battery percentage in the mode line
-;;(display-battery-mode 1)
-
 ;;Overwrite selected content
 (delete-selection-mode)
 
