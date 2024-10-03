@@ -73,9 +73,6 @@
 
 (global-set-key (kbd "C-S-x k") 'gurd-kill-other-buffer)
 
-;; binds hippe-expand
-(global-set-key "\M- " 'hippie-expand)
-
 ;; Displays battery percentage in the mode line
 ;;(display-battery-mode 1)
 
