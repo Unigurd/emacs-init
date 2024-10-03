@@ -509,32 +509,33 @@
 (use-package nix-mode)
 
 ;; Haskell
-(use-package haskell-mode
-  :ensure t
-  :config
-  (setq haskell-tags-on-save t)
-  (setq tags-revert-without-query t)
-  (define-key haskell-mode-map (kbd "C-c j") 'haskell-mode-jump-to-def)
-  (define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile)
-  (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
-  ;; :hook
-  ;; (haskell-mode . flycheck-haskell-setup)
-  ;;(haskell-mode . haskell-collapse-mode)
+(progn
+  (use-package haskell-mode
+    :config
+    (setq haskell-tags-on-save t)
+    (setq tags-revert-without-query t)
+    (define-key haskell-mode-map (kbd "C-c j") 'haskell-mode-jump-to-def)
+    (define-key haskell-mode-map (kbd "C-c C-c") 'haskell-compile)
+    (define-key haskell-mode-map (kbd "C-`") 'haskell-interactive-bring)
+    ;; :hook
+    ;; (haskell-mode . flycheck-haskell-setup)
+    ;;(haskell-mode . haskell-collapse-mode)
+    )
+
+  (use-package haskell-cabal
+    :config
+    '(define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-compile))
+
+  (use-package haskell-interactive-mode
+    :after (haskell-mode)
+    :config
+    (add-hook 'haskell-mode-hook 'interactive-haskell-mode))
+
+  (use-package haskell-process
+    :after (haskell-interactive-mode))
+
+  ;;(define-key haskell-interactive-mode-map (kbd "C-`") 'haskell-interactive-bring)
   )
-
-(use-package haskell-cabal
-  :config
-  '(define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-compile))
-
-(use-package haskell-interactive-mode
-  :after (haskell-mode)
-  :config
-  (add-hook 'haskell-mode-hook 'interactive-haskell-mode))
-
-(use-package haskell-process
-  :after (haskell-interactive-mode))
-
-;;(define-key haskell-interactive-mode-map (kbd "C-`") 'haskell-interactive-bring)
 
 ;; shell
 (defvar sh-basic-offset 2)
@@ -542,16 +543,16 @@
 ;; Prolog
 (use-package ediprolog
   :ensure t
-  :config
-  (global-set-key [f10] 'ediprolog-dwim)
-  (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
-  (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode)))
+    :config
+    (global-set-key [f10] 'ediprolog-dwim)
+    (autoload 'prolog-mode "prolog" "Major mode for editing Prolog programs." t)
+    (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode)))
 
 (defun browse-swi-prolog (query)
-  "Search Swi-Prolog site for QUERY."
-  (interactive (list (let* ((default (thing-at-point 'word))
-                            (message (format "Browse Swi-Prolog (default %s): " default)))
-                       (read-string message nil nil default))))
+    "Search Swi-Prolog site for QUERY."
+    (interactive (list (let* ((default (thing-at-point 'word))
+                              (message (format "Browse Swi-Prolog (default %s): " default)))
+                         (read-string message nil nil default))))
   (browse-url (format "https://www.swi-prolog.org/search?for=%s" query)))
 
 ;;(require 'ediprolog)
