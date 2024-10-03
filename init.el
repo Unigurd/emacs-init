@@ -139,15 +139,6 @@
 
 
 
-;; Generates commands that writes a specific piece of text
-;; Doesn't handle sticky properties, whatever that is
-;; I'm using them for writing danish letters on
-;; an english/american keyboard layout (I forget which)
-;; in evil's insert state
-(defun gurd-text-inserter (text prefix)
-  () (dotimes (i (prefix-numeric-value prefix))
-       (insert text)))
-
 ;; Switch to other buffer wtihout fanfare
 ;; Would be nice to go through the buffer list like tabs in
 (defun switch-to-other-buffer ()
