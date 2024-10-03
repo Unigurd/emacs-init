@@ -15,17 +15,14 @@
 ;;
 
 ;;; Initialize MELPA
-;; Also eval during compilation so melpa is accessible
-;; when use-package is required so it can be installed
-(eval-and-compile
-  (require 'package)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-  (package-initialize))
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
 ;; use-package
 (eval-when-compile
-  (unless (package-installed-p 'use-package)
-    (package-install 'use-package))
+  ;; I think I only (require 'use-package) at compile time
+  ;; because it's only a macro so no reason for it to stick around after
+  ;; macro-expansion?
   (require 'use-package))
 
 
