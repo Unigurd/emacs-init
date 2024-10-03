@@ -61,6 +61,10 @@
 
 (global-set-key (kbd "C-x K") 'kill-this-buffer)
 
+;; Don't shorten the printed representation of evaluated lisp data
+;; with ellipsis like (foo bar ...)
+(setf eval-expression-print-length nil
+      eval-expression-print-level nil)
 
 (defun gurd-kill-other-buffer ()
   "Kill buffer in other window."
