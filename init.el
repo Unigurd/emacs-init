@@ -5,6 +5,8 @@
 
 (setf custom-theme-directory (expand-file-name "custom-themes/" user-emacs-directory))
 
+(load custom-file t)
+
 (load-theme 'gurd t)
 
 (use-package nix-mode)
@@ -28,7 +30,6 @@
   (require 'use-package))
 
 
-(load custom-file t)
 
 ;;
 ;;:   SETUP
