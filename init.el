@@ -48,6 +48,8 @@
 ;;Show line and column number in the mode line
 (column-number-mode 1)
 
+(setq sentence-end-double-space nil)
+
 ;; Changes all yes/no questions to y/n type
 (fset 'yes-or-no-p 'y-or-n-p)
 
