@@ -25,6 +25,9 @@
   ;; macro-expansion?
   (require 'use-package))
 
+(add-to-list 'load-path "/home/gurd/emacs/")
+(let ((default-directory "/home/gurd/emacs/"))
+  (normal-top-level-add-subdirs-to-load-path))
 
 
 ;;
@@ -32,9 +35,6 @@
 ;;
 
 
-(add-to-list 'load-path "/home/gurd/emacs/")
-(let ((default-directory "/home/gurd/emacs/"))
-  (normal-top-level-add-subdirs-to-load-path))
 
 
 ;; Disable emacs startup-screen
