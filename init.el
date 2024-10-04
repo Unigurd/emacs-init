@@ -218,32 +218,6 @@
                   rev-ascii-list)))
     (concat (reverse rev-ascii-list))))
 
-(defun gurd-plist-get (type l)
-  (cond ((null l) nil)
-        ((equal type :properties) (gurd-plist-get t l))
-        ((equal type :values)    (gurd-plist-get nil l))
-        ((null type) (gurd-plist-get (not type) (cdr l)))
-        (t (cons (car l) (gurd-plist-get (not type) (cdr l))))))
-
-
-(defun gurd-plist-map (f plist)
-  (cond ((null plist) nil)
-        ((and (consp plist) (consp (cdr plist)))
-         (cons (car plist) (cons (funcall f (cadr plist)) (gurd-plist-map f (cddr plist)))))
-        (t (error "gurd-plist-map given malformed plist"))))
-
-(defun gurd-plist-get-with-default (plist prop default)
-  (let ((val (plist-get plist prop)))
-    (if (null val)
-        default
-      val)))
-
-(defun gurd-map-these (p f l)
-  (cond ((consp l)
-         (cons (if (funcall p (car l)) (funcall f (car l)) (car l)) (gurd-map-these p f (cdr l))))
-        ((null l) l)
-        (t (signal 'wrong-type-argument (list 'listp l)))))
-
 ;; Minesweeper
 (let* ((mines-dir "~/.emacs.d/git/mines/")
        (mines-source-file (concat mines-dir "mines.el"))
