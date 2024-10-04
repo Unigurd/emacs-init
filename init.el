@@ -224,6 +224,25 @@
   ;; (setf eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
   )
 
+;; TODO: look into `cape'
+(use-package corfu
+  :custom
+  (corfu-auto t)
+  ;; Prevent corfu from interfering with mct (which I don't use as of this writing)
+  ;; vertico (which I do), and password input.
+  (global-corfu-minibuffer (lambda ()
+                             (not (or (bound-and-true-p mct--active)
+                                      (bound-and-true-p vertico--input)
+                                      (eq (current-local-map) read-passwd-map)))))
+  :init
+  (global-corfu-mode)
+  :config
+  (keymap-unset corfu-map "RET" t)
+  :bind (:map corfu-map
+              ("TAB" . corfu-expand)      ; Expand common prefix
+              ("M-TAB" . corfu-complete)) ; Use first suggestion
+  ;; TODO: Make TAB work in evil-insert
+  )
 
 (use-package face-remap
   :bind ())
