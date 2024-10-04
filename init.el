@@ -335,81 +335,16 @@
 
 ;; Evil-mode
 (use-package evil
-  :ensure t
-  :init
-  (add-to-list 'load-path "/home/gurd/.emacs.d/evil")
   :config
-  (add-hook 'evil-mode-hook (lambda () (local-set-key (kbd "<tab>") 'indent-for-tab-command)))
-
-  ;; Normal emacs indenting
-  (evil-global-set-key 'normal (kbd "<tab>") 'indent-for-tab-command)
-  (evil-global-set-key 'insert (kbd "<tab>") 'indent-for-tab-command)
-
-  ;; Modes that should not start in evil
-  (evil-set-initial-state 'tabulated-list-mode 'emacs)
-  (evil-set-initial-state 'dired-mode 'emacs)
-  (evil-set-initial-state 'term-mode 'emacs)
-  (evil-set-initial-state 'Info-mode 'emacs)
-  (evil-set-initial-state 'image-dired-mode 'emacs)
-  (evil-set-initial-state 'compilation-mode 'emacs)
-  (evil-set-initial-state 'haskell-compilation-mode 'emacs)
-  (evil-set-initial-state 'haskell-error-mode 'emacs)
-  (evil-set-initial-state 'inferior-haskell-mode 'emacs)
-  (evil-set-initial-state 'haskell-interactive-mode 'emacs)
-  (evil-set-initial-state 'shell-mode 'emacs)
-  (evil-set-initial-state 'Man-mode 'emacs)
-  (evil-set-initial-state 'help-mode 'emacs)
-  (evil-set-initial-state 'prolog-inferior-mode 'emacs)
-  (evil-set-initial-state 'eww-mode 'emacs)
-  (evil-set-initial-state 'gud-mode 'emacs)
-  (evil-set-initial-state 'erc-mode 'emacs)
-  (evil-set-initial-state 'eshell-mode 'emacs)
-  (evil-set-initial-state 'xref--xref-buffer-mode 'emacs)
-  (evil-set-initial-state 'slime-repl-mode 'emacs)
-  (evil-set-initial-state 'inferior-python-mode 'emacs)
-  (evil-set-initial-state 'geiser-repl-mode 'emacs)
-
-  ;; (interactive "P")
-  ;; Write the danish letters by s-(whatever their key would be)
-  (evil-global-set-key 'insert (kbd "s-;")
-                       (lambda (prefix) (interactive "P")
-                         (gurd-text-inserter ?æ prefix)))
-  (evil-global-set-key 'insert (kbd "s-:")
-                       (lambda (prefix) (interactive "P")
-                         (gurd-text-inserter ?Æ prefix)))
-  (evil-global-set-key 'insert (kbd "s-'")
-                       (lambda (prefix) (interactive "P")
-                         (gurd-text-inserter ?ø prefix)))
-  (evil-global-set-key 'insert (kbd "s-\"")
-                       (lambda (prefix) (interactive "P")
-                         (gurd-text-inserter ?Ø prefix)))
-  (evil-global-set-key 'insert (kbd "s-[")
-                       (lambda (prefix) (interactive "P")
-                         (gurd-text-inserter ?å prefix)))
-  (evil-global-set-key 'insert (kbd "s-{")
-                       (lambda (prefix) (interactive "P")
-                         (gurd-text-inserter ?Å prefix)))
-  (evil-global-set-key 'emacs (kbd "s-;")
-                       (lambda (prefix) (interactive "P")
-                         (gurd-text-inserter ?æ prefix)))
-  (evil-global-set-key 'emacs (kbd "s-:")
-                       (lambda (prefix) (interactive "P")
-                         (gurd-text-inserter ?Æ prefix)))
-  (evil-global-set-key 'emacs (kbd "s-'")
-                       (lambda (prefix) (interactive "P")
-                         (gurd-text-inserter ?ø prefix)))
-  (evil-global-set-key 'emacs (kbd "s-\"")
-                       (lambda (prefix) (interactive "P")
-                         (gurd-text-inserter ?Ø prefix)))
-  (evil-global-set-key 'emacs (kbd "s-[")
-                       (lambda (prefix) (interactive "P")
-                         (gurd-text-inserter ?å prefix)))
-  (evil-global-set-key 'emacs (kbd "s-{")
-                       (lambda (prefix) (interactive "P")
-                         (gurd-text-inserter ?Å prefix)))
-
-  (evil-mode 1))
-
+  (setf evil-default-state 'emacs
+        evil-motion-state-modes nil)
+  (add-to-list 'evil-buffer-regexps '("^COMMIT_EDITMSG$" . emacs) )
+  (with-no-warnings ; silence `evil-global-set-key' not known to be defined
+    (evil-global-set-key 'normal (kbd "<tab>") 'indent-for-tab-command)
+    (evil-global-set-key 'insert (kbd "<tab>") 'indent-for-tab-command)
+    (evil-set-initial-state 'prog-mode 'normal)
+    (evil-set-initial-state 'text-mode 'normal))
+  (evil-mode))
 
 
 ;; ace-window
