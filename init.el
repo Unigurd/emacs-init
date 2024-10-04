@@ -349,7 +349,6 @@
 
 ;; ace-window
 (use-package ace-window
-  :ensure t
   :config
   (bind-key (kbd "C-M-o") 'ace-window)
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
