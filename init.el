@@ -245,6 +245,8 @@
   :init (global-flycheck-mode))
 (use-package magit)
 
+(use-package git-timemachine)
+
 
 ;; TODO: Look into vundo, undo-fu
 (use-package undo-tree
