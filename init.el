@@ -284,6 +284,12 @@
   :bind (:map isearch-mode-map
               ("C-o" . casual-isearch-tmenu)))
 
+(use-package casual-re-builder
+  :bind (:map
+         reb-mode-map ("C-o" . casual-re-builder-tmenu)
+         :map
+         reb-lisp-mode-map ("C-o" . casual-re-builder-tmenu))
+  :after (re-builder))
 
 (use-package flycheck
   :ensure t
