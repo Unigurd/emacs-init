@@ -507,13 +507,19 @@
 
 
 
+;; (use-package evil-lispy
+;;   :config
+;;   (define-advice lispy--insert (:around (wrapped-fun &rest args) no-ellipsis)
+;;     "To avoid lispy replacing code with ..."
+;;     (let ((print-level nil)
+;;           (print-length nil))
+;;       (apply wrapped-fun args)))
+;;   :hook (lisp-data-mode . evil-lispy-mode))
 
 
 
 (setq flycheck-standard-error-navigation nil)
 
-(use-package evil-lispy
-  :ensure t)
 
 
 
