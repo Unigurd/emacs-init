@@ -209,23 +209,6 @@
   :init
   (marginalia-mode))
 
-(defun hex-to-ascii (hex-string)
-  "Convert string HEX-STRING to its ascii representation."
-  (unless (= (mod (string-width hex-string) 2) 0)
-    (error "Uneven amount of hex digits"))
-  (let ((hex-to-num
-         (lambda (hex-char)
-           (pcase hex-char
-             (48 0) (49 1) (50 2) (51 3) (52 4) (53 5) (54 6) (55 7) (56 8)
-             (57 9) (97 10) (98 11) (99 12) (100 13) (101 14) (102 15)
-             (_ (throw 'char-not-valid-hex nil)))))
-        (rev-ascii-list nil))
-    (dotimes (i (/ (string-width hex-string) 2))
-      (setf rev-ascii-list
-            (cons (+ (* 16 (funcall hex-to-num (aref hex-string (* 2 i))))
-                     (funcall hex-to-num (aref hex-string (+ (* 2 i) 1))))
-                  rev-ascii-list)))
-    (concat (reverse rev-ascii-list))))
 (use-package embark
   :bind
   (("C-." . embark-act)
@@ -510,6 +493,23 @@ Uses the symbol at *POS* if it is non-nil and symbol at point otherwise."
 
 (add-hook 'emacs-lisp-mode-hook #'evil-lispy-mode)
 (setq sentence-end-double-space nil)
+(defun hex-to-ascii (hex-string)
+  "Convert string HEX-STRING to its ascii representation."
+  (unless (= (mod (string-width hex-string) 2) 0)
+    (error "Uneven amount of hex digits"))
+  (let ((hex-to-num
+         (lambda (hex-char)
+           (pcase hex-char
+             (48 0) (49 1) (50 2) (51 3) (52 4) (53 5) (54 6) (55 7) (56 8)
+             (57 9) (97 10) (98 11) (99 12) (100 13) (101 14) (102 15)
+             (_ (throw 'char-not-valid-hex nil)))))
+        (rev-ascii-list nil))
+    (dotimes (i (/ (string-width hex-string) 2))
+      (setf rev-ascii-list
+            (cons (+ (* 16 (funcall hex-to-num (aref hex-string (* 2 i))))
+                     (funcall hex-to-num (aref hex-string (+ (* 2 i) 1))))
+                  rev-ascii-list)))
+    (concat (reverse rev-ascii-list))))
 
 ;; Common Lisp
 (use-package slime
