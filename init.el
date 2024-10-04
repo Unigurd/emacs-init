@@ -151,13 +151,6 @@
   (lambda() (interactive) (insert (buffer-file-name (nth 1 (buffer-list))))))
 
 
-(use-package org-ref
-  :ensure t
-  :config
-  ;; (setq org-latex-pdf-process '("texi2dvi -p -b -V %f"))
-  (setq org-latex-pdf-process '("latexmk -shell-escape -bibtex -f -pdf %f")))
-
-
 (define-key global-map (kbd "C-c h") 'comment-region)
 
 
