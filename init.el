@@ -173,6 +173,11 @@
 (define-key minibuffer-local-map [f3]
   (lambda() (interactive) (insert (buffer-file-name (nth 1 (buffer-list))))))
 
+(use-package hl-line
+  :config
+  (global-hl-line-mode))
+
+
 ;; This used to be:
 ;; (use-package latex
 ;;   :ensure auctex)
