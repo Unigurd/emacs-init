@@ -264,6 +264,22 @@
               ("p" . casual-info-browse-backward-paragraph)
               ("n" . casual-info-browse-forward-paragraph)))
 
+(use-package ibuffer
+  :hook (ibuffer-mode . ibuffer-auto-mode)
+  :defer t
+  :bind (:map ibuffer-mode-map
+              ("{" . ibuffer-backwards-next-marked)
+              ("}" . ibuffer-forward-next-marked)
+              ("[" . ibuffer-backward-filter-group)
+              ("]" . ibuffer-forward-filter-group)
+              ("$" . ibuffer-toggle-filter-group)))
+
+(use-package casual-ibuffer
+  :bind (:map ibuffer-mode-map
+              ("?" . casual-ibuffer-tmenu)
+              ("F" . casual-ibuffer-filter-tmenu)
+              ("s" . casual-ibuffer-sortby-tmenu)))
+
 
 (use-package flycheck
   :ensure t
