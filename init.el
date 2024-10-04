@@ -199,6 +199,12 @@
   ;; TODO: Highlight TODOs in programming modes
   )
 
+(use-package casual-symbol-overlay
+  :bind (("C-c G" . casual-symbol-overlay-tmenu)
+         :map symbol-overlay-map
+         ("?" . casual-symbol-overlay-tmenu))
+  :after (symbol-overlay))
+
 
 (use-package hideshow
   :hook
