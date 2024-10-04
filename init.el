@@ -562,36 +562,16 @@ Makes them only move half a page down.
           (lambda () (define-key evil-normal-state-local-map (kbd "<mouse-2>") 'ignore)))
 ;; Common Lisp
 (use-package slime
+  :after gurd-commands
   :config
   (let ((slime-file "~/quicklisp/slime-helper.el"))
     (when (file-exists-p slime-file)
       (load (expand-file-name "~/quicklisp/slime-helper.el"))))
 
-  (defun gurd-slime-inspector-link-finder (limit)
-    (let ((match (text-property-search-forward 'slime-part-number)))
-      (when (and match (> limit (prop-match-end match)))
-        (set-match-data (list (prop-match-beginning match) (prop-match-end match))))
-      match))
-
-  (font-lock-add-keywords 'slime-inspector-mode `((,#'gurd-slime-inspector-link-finder . font-lock-builtin-face)))
-
-  (advice-add 'slime-sexp-at-point :filter-return
-              (lambda (arg)
-                "Prepend ' to read sexp if current-prefix-arg."
-                ;; TODO: find way to check if some ancestor fun is called interactively
-                (if current-prefix-arg
-                    (concat "'" arg)
-                  arg)))
-  (setf slime-scratch-file "~/.emacs.d/slime-scratch")
-
-  (add-hook 'lisp-mode-hook #'evil-lispy-mode)
+  ;; Replace "sbcl" with the path to your implementation
+  (setf inferior-lisp-program "sbcl")
   :bind
-  ("C-c *" . earmuffs))
-
-;; Replace "sbcl" with the path to your implementation
-(setf inferior-lisp-program "sbcl")
-
-
+  (:map lisp-mode-map ("C-c *" . earmuffs)))
 
 
 
