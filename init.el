@@ -151,8 +151,6 @@
   (lambda() (interactive) (insert (buffer-file-name (nth 1 (buffer-list))))))
 
 
-(define-key global-map (kbd "C-c h") 'comment-region)
-
 
 (let* ((version (progn
                   (string-match "GNU Emacs \\([0-9]+\\.[0-9]+\\)" (version))
