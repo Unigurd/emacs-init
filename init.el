@@ -180,7 +180,6 @@
 
 
 
-(use-package flycheck)
 (use-package savehist
   :init
   (savehist-mode))
@@ -292,8 +291,15 @@
   :after (re-builder))
 
 (use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
+  :init
+  ;; Autoloaded, so does calling it in :init cause `flycheck' to
+  ;; get loaded while before `use-package' would have loaded it?
+  (global-flycheck-mode)
+  :config
+  (setq flycheck-standard-error-navigation nil)
+  (setq-default flycheck-disabled-checkers
+                (cons 'emacs-lisp-checkdoc (default-value 'flycheck-disabled-checkers))))
+
 (use-package magit)
 
 (use-package git-timemachine)
@@ -373,8 +379,6 @@
 ;;   :hook (lisp-data-mode . evil-lispy-mode))
 
 
-
-(setq flycheck-standard-error-navigation nil)
 
 (defun half-screen-scroll-advice (wrapped-fun &rest args)
   "Use this as :around advice for functions that move the screen a page down.
