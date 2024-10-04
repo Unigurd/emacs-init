@@ -820,10 +820,11 @@ Otherwise prompt for a test to run."
 
 
 
-;; Makes 'a' work in Dired
+;; Disable disabling these commands
 (put 'dired-find-alternate-file 'disabled nil)
 (put 'scroll-left 'disabled nil)
 (put 'list-threads 'disabled nil)
+
+
 (provide 'init)
 ;;; init.el ends here
-
