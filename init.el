@@ -362,13 +362,6 @@
     (lambda () (rainbow-delimiters-mode 1)))
   (my-global-rainbow-delimiters-mode 1))
 
-;; calendar
-(use-package calfw
-  :ensure t)
-
-(use-package calfw-org
-  :ensure t)
-
 ;;;;  both ways org-gcal sync
 ;;(load-file "~/.emacs.d/org-caldav/org-caldav.el")
 ;;(setq org-caldav-oauth2-client-id "801724761408-20jktro7tqi7it8ls39f6192fpulg7n9.apps.googleusercontent.com"
