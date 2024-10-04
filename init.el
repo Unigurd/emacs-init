@@ -560,6 +560,16 @@ Makes them only move half a page down.
           (lambda () (define-key evil-normal-state-local-map (kbd "<down-mouse-1>") 'ignore)))
 (add-hook 'mines-mode-hook
           (lambda () (define-key evil-normal-state-local-map (kbd "<mouse-2>") 'ignore)))
+
+
+;; My own highlight-help-parameters mode
+(use-package highlight-help-parameters
+  :hook (help-mode . highlight-help-parameters-mode))
+
+
+
+
+
 ;; Common Lisp
 (use-package slime
   :after gurd-commands
