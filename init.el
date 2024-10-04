@@ -163,12 +163,6 @@
 
 
 
-;; email smtp
-(setf mail-host-address "hotmail.com"
-      user-mail-address "Sigurddam@hotmail.com")
-
-(setf user-full-name "Sigurd Dam Sonniks")
-
 (use-package flycheck)
 
 
