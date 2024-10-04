@@ -41,6 +41,7 @@
 
 
 
+(setf display-raw-bytes-as-hex t)
 
 ;; Disable emacs startup-screen
 (setq inhibit-startup-screen t)
