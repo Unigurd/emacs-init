@@ -280,6 +280,10 @@
               ("F" . casual-ibuffer-filter-tmenu)
               ("s" . casual-ibuffer-sortby-tmenu)))
 
+(use-package casual-isearch
+  :bind (:map isearch-mode-map
+              ("C-o" . casual-isearch-tmenu)))
+
 
 (use-package flycheck
   :ensure t
