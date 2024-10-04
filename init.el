@@ -411,16 +411,6 @@
   (evil-mode 1))
 
 
-;; persistent-scratch buffer *scratch*
-;; persistent-scratch doesn't get properly installed
-;; with use-package
-(unless (package-installed-p 'persistent-scratch)
-  (package-install 'persistent-scratch))
-
-(use-package persistent-scratch
-  :config
-  (persistent-scratch-setup-default))
-
 
 ;; ace-window
 (use-package ace-window
