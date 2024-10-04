@@ -245,6 +245,25 @@
               ("s" . casual-dired-sort-by-tmenu)
               ("/" . casual-dired-search-replace-tmenu)))
 
+(use-package info
+  :bind (:map Info-mode-map
+              ;; Make info behave like in casual-info
+              ("M-[" . Info-history-back)
+              ("M-]" . Info-history-forward)
+              ("h" . Info-prev)
+              ("j" . Info-next-reference)
+              ("k" . Info-prev-reference)
+              ("l" . Info-next)
+              ("/" . Info-search)
+              ("B" . bookmark-set)))
+
+(use-package casual-info
+  :bind (:map Info-mode-map
+              ;; Make normal info behave like casual-info
+              ("?" . casual-info-tmenu)
+              ("p" . casual-info-browse-backward-paragraph)
+              ("n" . casual-info-browse-forward-paragraph)))
+
 
 (use-package flycheck
   :ensure t
