@@ -448,6 +448,8 @@
 ;;   :hook (lisp-data-mode . evil-lispy-mode))
 
 
+(use-package scratch-file-mode
+  :hook (lisp-interaction-mode . scratch-file-mode))
 
 (defun half-screen-scroll-advice (wrapped-fun &rest args)
   "Use this as :around advice for functions that move the screen a page down.
