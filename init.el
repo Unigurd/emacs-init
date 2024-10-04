@@ -203,6 +203,11 @@
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
+(use-package marginalia
+  ;; Also add to `completion-list-mode-map'?
+  :bind (:map minibuffer-local-map ("M-A" . marginalia-cycle))
+  :init
+  (marginalia-mode))
 
 (defun hex-to-ascii (hex-string)
   "Convert string HEX-STRING to its ascii representation."
