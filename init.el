@@ -197,6 +197,11 @@
 ;;
 ;;: gurd
 ;;
+(use-package orderless
+  :custom
+  ;; Customized according to https://github.com/oantolin/orderless?tab=readme-ov-file#overview
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 
 
 (defun hex-to-ascii (hex-string)
