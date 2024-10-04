@@ -227,6 +227,8 @@
 (add-hook 'mines-mode-hook
           (lambda () (define-key evil-normal-state-local-map (kbd "<mouse-2>") 'ignore)))
 
+(use-package face-remap
+  :bind ())
 
 ;;
 ;;:   PACKAGES
