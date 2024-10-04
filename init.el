@@ -293,8 +293,8 @@
 (use-package magit
   :ensure t)
 
+;; TODO: Look into vundo, undo-fu
 (use-package undo-tree
-  :ensure t
   :config
   (setq undo-tree-history-directory-alist
         `(("." . ,(file-name-concat user-emacs-directory ".cache" "undo-tree"))))
