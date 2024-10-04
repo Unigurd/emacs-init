@@ -354,11 +354,6 @@
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
 ;; rainbow
-(use-package rainbow-blocks
-  :ensure t)
-
-
-
 (use-package rainbow-delimiters
   :ensure t
   :config
