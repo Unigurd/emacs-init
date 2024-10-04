@@ -118,7 +118,10 @@
 (setq-default show-trailing-whitespace t)
 
 ;; higher contrast (of what?)
-(setq shr-color-visible-luminance-min 70)
+(use-package shr-color
+  :defer t
+  :config
+  (setf shr-color-visible-luminance-min 70))
 
 ;; hide trailing whitespace in selected modes
 (defun my-hide-trailing-whitespace-maybe ()
