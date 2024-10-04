@@ -527,7 +527,6 @@ Makes them only move half a page down.
 
 
 (add-hook 'emacs-lisp-mode-hook #'evil-lispy-mode)
-(setq sentence-end-double-space nil)
 (defun hex-to-ascii (hex-string)
   "Convert string HEX-STRING to its ascii representation."
   (unless (= (mod (string-width hex-string) 2) 0)
