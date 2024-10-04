@@ -229,17 +229,6 @@
 ;;:   PACKAGES
 ;;
 
-;; persistent-scratch doesn't get properly installed
-;; with use-package
-(unless (package-installed-p 'helm)
-  (package-install 'helm))
-
-(use-package helm
-  :bind (("M-x" . helm-M-x)
-         ("C-x r b" . helm-filtered-bookmarks)
-         ("C-x C-f" . helm-find-files))
-  :config
-  (helm-mode))
 
 (use-package dired
   :config
