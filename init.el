@@ -574,9 +574,6 @@
 
 ;;
 
-;; F#
-;;(require 'fsharp-mode)
-;;(add-hook 'fs-mode-hook #'smartparens-mode) ;Why this?
 
 ;; Emacs Lisp Elisp
 (defun earmuffs (&optional pos)
