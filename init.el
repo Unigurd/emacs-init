@@ -235,12 +235,6 @@
 ;;
 
 
-(use-package dired
-  :config
-  (defun xah-dired-mode-setup ()
-    "Hides details in Dired. To be run as hook for `dired-mode'. From http://ergoemacs.org/emacs/emacs_dired_tips.html"
-    (dired-hide-details-mode 1))
-  (add-hook 'dired-mode-hook 'xah-dired-mode-setup))
 
 (use-package flycheck
   :ensure t
