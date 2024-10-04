@@ -205,6 +205,13 @@
          ("?" . casual-symbol-overlay-tmenu))
   :after (symbol-overlay))
 
+(use-package highlight-indent-guides
+  :config
+  (setf highlight-indent-guides-method 'character
+        highlight-indent-guides-auto-enabled nil)
+  (set-face-foreground 'highlight-indent-guides-character-face "dim gray")
+  :hook
+  (prog-mode . highlight-indent-guides-mode))
 
 (use-package hideshow
   :hook
