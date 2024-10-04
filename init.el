@@ -362,11 +362,6 @@
     (lambda () (rainbow-delimiters-mode 1)))
   (my-global-rainbow-delimiters-mode 1))
 
-;;change w3m user-agent to android
-;; But why?
-
-(setq w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.")
-
 ;; Back when I didn't use the mouse :')
 (define-minor-mode disable-mouse-mode
   "A minor-mode that disables all mouse keybinds."
