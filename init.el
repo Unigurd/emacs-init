@@ -224,23 +224,6 @@
   ;; (setf eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
   )
 
-;; Minesweeper
-(let* ((mines-dir "~/.emacs.d/git/mines/")
-       (mines-source-file (concat mines-dir "mines.el"))
-       (mines-compiled-file (concat mines-source-file "c")))
-  (when (file-exists-p mines-source-file)
-    (unless (or (file-exists-p (concat mines-dir "mines.elc"))
-                (file-newer-than-file-p mines-source-file mines-compiled-file))
-      (byte-compile-file mines-source-file))
-    (load-file mines-compiled-file)))
-(add-hook 'mines-mode-hook
-          (lambda () (define-key evil-normal-state-local-map (kbd "SPC") 'mines-sweep)))
-(add-hook 'mines-mode-hook
-          (lambda () (define-key evil-normal-state-local-map (kbd "<tab>") 'mines-flag)))
-(add-hook 'mines-mode-hook
-          (lambda () (define-key evil-normal-state-local-map (kbd "<down-mouse-1>") 'ignore)))
-(add-hook 'mines-mode-hook
-          (lambda () (define-key evil-normal-state-local-map (kbd "<mouse-2>") 'ignore)))
 
 (use-package face-remap
   :bind ())
@@ -511,6 +494,23 @@ Uses the symbol at *POS* if it is non-nil and symbol at point otherwise."
                   rev-ascii-list)))
     (concat (reverse rev-ascii-list))))
 
+;; Minesweeper
+(let* ((mines-dir "~/.emacs.d/git/mines/")
+       (mines-source-file (concat mines-dir "mines.el"))
+       (mines-compiled-file (concat mines-source-file "c")))
+  (when (file-exists-p mines-source-file)
+    (unless (or (file-exists-p (concat mines-dir "mines.elc"))
+                (file-newer-than-file-p mines-source-file mines-compiled-file))
+      (byte-compile-file mines-source-file))
+    (load-file mines-compiled-file)))
+(add-hook 'mines-mode-hook
+          (lambda () (define-key evil-normal-state-local-map (kbd "SPC") 'mines-sweep)))
+(add-hook 'mines-mode-hook
+          (lambda () (define-key evil-normal-state-local-map (kbd "<tab>") 'mines-flag)))
+(add-hook 'mines-mode-hook
+          (lambda () (define-key evil-normal-state-local-map (kbd "<down-mouse-1>") 'ignore)))
+(add-hook 'mines-mode-hook
+          (lambda () (define-key evil-normal-state-local-map (kbd "<mouse-2>") 'ignore)))
 ;; Common Lisp
 (use-package slime
   :config
