@@ -811,7 +811,6 @@ Otherwise prompt for a test to run."
 
 ;; arduino
 (use-package arduino-mode
-  :ensure t
   :config
   (add-hook 'arduino-mode-hook #'flycheck-arduino-setup))
 
