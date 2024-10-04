@@ -1,0 +1,17 @@
+.cache
+*scratch*
+%backup%~
+*~undo-tree~
+auto-save-list
+backups
+bookmarks
+eln-cache
+elpa
+eshell
+games
+history
+projects
+semanticdb
+tramp
+transient
+url
