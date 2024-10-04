@@ -237,6 +237,14 @@
 
 (use-package wdired)
 
+(use-package casual-dired
+  :bind (:map dired-mode-map
+              ;; TODO: Change to command that runs `casual-dired-tmenu' by
+              ;; default and `dired-summary' with prefix?
+              ("?" . casual-dired-tmenu)
+              ("s" . casual-dired-sort-by-tmenu)
+              ("/" . casual-dired-search-replace-tmenu)))
+
 
 (use-package flycheck
   :ensure t
