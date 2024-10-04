@@ -243,9 +243,8 @@
 (use-package flycheck
   :ensure t
   :init (global-flycheck-mode))
+(use-package magit)
 
-(use-package magit
-  :ensure t)
 
 ;; TODO: Look into vundo, undo-fu
 (use-package undo-tree
