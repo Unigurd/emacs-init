@@ -150,19 +150,6 @@
 (define-key minibuffer-local-map [f3]
   (lambda() (interactive) (insert (buffer-file-name (nth 1 (buffer-list))))))
 
-;; ;; Go up a directory from anywhere in a dired buffer
-;; (defun up-dir ()
-;;   (interactive)
-;;   (find-file (concat (if (listp dired-directory) (car dired-directory) dired-directory) "/..")))
-;; (defun up-dir-alternate ()
-;;   (interactive)
-;;   (find-alternate-file
-;;    (concat (if (listp dired-directory) (car dired-directory) dired-directory) "/..")))
-;; (bind-key (kbd "[") 'up-dir dired-mode-map)
-;; (bind-key (kbd "{") 'up-dir-alternate dired-mode-map)
-;; org mode
-
-
 
 (use-package org-ref
   :ensure t
