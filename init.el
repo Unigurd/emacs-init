@@ -29,6 +29,11 @@
 (let ((default-directory "/home/gurd/emacs/"))
   (normal-top-level-add-subdirs-to-load-path))
 
+(let ((default-directory
+       (expand-file-name (file-name-as-directory (file-name-concat  user-emacs-directory "elisp" "")))))
+  (add-to-list 'load-path default-directory)
+  (normal-top-level-add-subdirs-to-load-path))
+
 
 ;;
 ;;:   SETUP
