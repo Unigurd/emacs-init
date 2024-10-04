@@ -188,6 +188,16 @@
 ;; writing latex
 (use-package  auctex)
 
+(use-package symbol-overlay
+  :bind-keymap ("C-c g" . symbol-overlay-map)
+  :bind (:map symbol-overlay-map
+              ("M-n" . symbol-overlay-switch-forward)
+              ("M-p" . symbol-overlay-switch-backward))
+  :hook (after-change-major-mode . symbol-overlay-mode)
+  :config
+  (setf symbol-overlay-idle-time 0.2)
+  ;; TODO: Highlight TODOs in programming modes
+  )
 
 
 (use-package hideshow
