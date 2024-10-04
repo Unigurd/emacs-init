@@ -355,12 +355,11 @@
 
 ;; rainbow
 (use-package rainbow-delimiters
-  :ensure t
   :config
-  ;; rainbow-delimiters automatisk paa
-  (define-globalized-minor-mode my-global-rainbow-delimiters-mode rainbow-delimiters-mode
-    (lambda () (rainbow-delimiters-mode 1)))
-  (my-global-rainbow-delimiters-mode 1))
+  (with-no-warnings
+    (define-globalized-minor-mode my-global-rainbow-delimiters-mode rainbow-delimiters-mode
+      (lambda () (rainbow-delimiters-mode 1)))
+    (my-global-rainbow-delimiters-mode 1)))
 
 ;;Smart mode line
 (use-package smart-mode-line
