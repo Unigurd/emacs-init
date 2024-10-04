@@ -202,7 +202,6 @@
   ;; (setq org-latex-pdf-process '("texi2dvi -p -b -V %f"))
   (setq org-latex-pdf-process '("latexmk -shell-escape -bibtex -f -pdf %f")))
 
-(setq next-screen-context-lines 28)
 
 (define-key global-map (kbd "C-c h") 'comment-region)
 
@@ -403,6 +402,19 @@
 
 (setq flycheck-standard-error-navigation nil)
 
+(defun half-screen-scroll-advice (wrapped-fun &rest args)
+  "Use this as :around advice for functions that move the screen a page down.
+Makes them only move half a page down.
+"
+  (let ((next-screen-context-lines (/ (window-total-height) 2)))
+    (apply wrapped-fun args)))
+
+(advice-add 'evil-scroll-page-down :around #'half-screen-scroll-advice)
+(advice-add 'evil-scroll-page-up :around #'half-screen-scroll-advice)
+(advice-add 'scroll-up-command :around #'half-screen-scroll-advice)
+(advice-add 'scroll-down-command :around #'half-screen-scroll-advice)
+(advice-add 'Info-scroll-up :around #'half-screen-scroll-advice)
+(advice-add 'Info-scroll-down :around #'half-screen-scroll-advice)
 
 
 
