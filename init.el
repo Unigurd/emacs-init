@@ -504,7 +504,12 @@
                 ?a ?s ?d ?f ?g ?h ?j ?k ?l
                 ?z ?x ?c ?v ?b ?n ?m)))
 
+(use-package paredit
+  :hook (lisp-data-mode . paredit-mode))
 
+(use-package evil-paredit
+  :after (evil paredit)
+  :hook (lisp-data-mode . evil-paredit-mode))
 
 
 ;; (use-package evil-lispy
