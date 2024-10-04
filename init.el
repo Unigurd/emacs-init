@@ -162,6 +162,16 @@
 (define-key minibuffer-local-map [f3]
   (lambda() (interactive) (insert (buffer-file-name (nth 1 (buffer-list))))))
 
+;; This used to be:
+;; (use-package latex
+;;   :ensure auctex)
+;; But I couldn't find a `latex' package with C-h P,
+;; I don't know why I don't just (use-package auctex)
+;; And I want to get rid of `:ensure's. But I'm keeping
+;; this note in case something has broken next time I'm
+;; writing latex
+(use-package  auctex)
+
 
 
 
