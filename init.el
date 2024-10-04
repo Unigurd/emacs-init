@@ -362,17 +362,6 @@
     (lambda () (rainbow-delimiters-mode 1)))
   (my-global-rainbow-delimiters-mode 1))
 
-;;;;  both ways org-gcal sync
-;;(load-file "~/.emacs.d/org-caldav/org-caldav.el")
-;;(setq org-caldav-oauth2-client-id "801724761408-20jktro7tqi7it8ls39f6192fpulg7n9.apps.googleusercontent.com"
-;;      org-caldav-oauth2-client-secret "KYX431MCLAjudoe_6FSm1rwh"
-;;      org-caldav-calendar-id "sigurddam@gmail.com"
-;;      org-caldav-url 'google
-;;      org-caldav-id "801724761408-20jktro7tqi7it8ls39f6192fpulg7n9.apps.googleusercontent.com"
-;;      org-caldav-files (list "~/org/uni.org"
-;;                             "~/org/adult.org")
-;;      org-caldav-inbox "~/org/mailCalendar.org"
-;;      org-icalendar-timezone "Europe/Copenhagen")
 ;;change w3m user-agent to android
 ;; But why?
 
