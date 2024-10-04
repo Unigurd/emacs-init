@@ -162,22 +162,6 @@
 ;; (bind-key (kbd "{") 'up-dir-alternate dired-mode-map)
 ;; org mode
 
-(use-package ox-beamer)
-
-(use-package latex
-  :ensure auctex)
-
-(use-package ox-latex
-  :after (org ox-beamer)
-  :config
-  (add-to-list 'org-latex-classes
-               '("beamer"
-                 "\\documentclass\[presentation\]\{beamer\}"
-                 ("\\section\{%s\}" . "\\section*\{%s\}")
-                 ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
-                 ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}")))
-  (define-key org-beamer-mode-map (kbd "C-c C-b") ())
-  (define-key org-beamer-mode-map (kbd "C-c b") 'org-beamer-select-environment))
 
 
 (use-package org-ref
