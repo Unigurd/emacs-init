@@ -226,6 +226,20 @@
                      (funcall hex-to-num (aref hex-string (+ (* 2 i) 1))))
                   rev-ascii-list)))
     (concat (reverse rev-ascii-list))))
+(use-package embark
+  :bind
+  (("C-." . embark-act)
+   ("C-;" . embark-dwim)
+   ("C-h B" . embark-bindings))
+  ;; Commented since the displayed embark documentation seemed to always
+  ;; just be "Embark on symbol X" for some X under point.
+  ;; :init
+  ;; (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+  ;; Show all eldoc options instead of just the first, I think.
+  ;; Not chosen because I think it might make the minibuffer jump up and down
+  ;; depending on the number of shown docstrings
+  ;; (setf eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+  )
 
 ;; Minesweeper
 (let* ((mines-dir "~/.emacs.d/git/mines/")
