@@ -174,6 +174,10 @@
 
 
 
+(use-package hideshow
+  :hook
+  (prog-mode . hs-minor-mode))
+
 
 
 (use-package flycheck)
