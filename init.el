@@ -162,22 +162,6 @@
 ;; (bind-key (kbd "{") 'up-dir-alternate dired-mode-map)
 ;; org mode
 
-(use-package org
-  :ensure t
-  :config
-  (bind-key (kbd "C-c l") 'org-store-link)
-  (bind-key (kbd "C-c a") 'org-agenda)
-  (bind-key (kbd "C-c c") 'org-capture)
-  ;; Default file for capturing
-  (setq org-default-notes-file (concat org-directory "/capture.org"))
-  ;; The files in my global org thing
-  (setq org-agenda-files (list "~/org/uni.org"
-                               "~/org/adult.org"
-                               "~/org/mailCalendar.org"))
-  (add-hook 'org-mode-hook 'auto-fill-mode)
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   (add-to-list 'org-babel-load-languages '(haskell . t))))
 (use-package ox-beamer)
 
 (use-package latex
