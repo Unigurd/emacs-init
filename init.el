@@ -39,6 +39,15 @@
 ;;:   SETUP
 ;;
 
+;; (use-package find-func
+;;   :config
+;;   ;; Find emacs C source directory
+;;   (let* ((version (progn
+;;                     (string-match "GNU Emacs \\([0-9]+\\.[0-9]+\\)" (version))
+;;                     (match-string 1 (version))))
+;;          (c-source-dir (concat "~/.emacs.d/c-source/emacs-" version "/src")))
+;;     (when (file-exists-p c-source-dir)
+;;       (setq find-function-C-source-directory c-source-dir))))
 
 
 (setf display-raw-bytes-as-hex t)
@@ -152,12 +161,6 @@
 
 
 
-(let* ((version (progn
-                  (string-match "GNU Emacs \\([0-9]+\\.[0-9]+\\)" (version))
-                  (match-string 1 (version))))
-       (c-source-dir (concat "~/.emacs.d/c-source/emacs-" version "/src")))
-  (when (file-exists-p c-source-dir)
-    (setq find-function-C-source-directory c-source-dir)))
 
 
 ;; email smtp
