@@ -251,6 +251,18 @@
 ;;:   PACKAGES
 ;;
 
+(use-package emacs
+  ;; What's the difference between :init and :config for the emacs package?
+  :custom
+  (enable-recursive-minibuffers t)
+  ;; Don't include commands marked as applicable for a non-active mode.
+  ;; Read Elisp info 22.2.4: Specifying Modes for Commands
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  :init
+  ;; Do not allow the cursor in the minibuffer prompt as per
+  ;; https://github.com/minad/vertico?tab=readme-ov-file#configuration
+  (setf (plist-get minibuffer-prompt-properties 'cursor-intangible) t)
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
 
 (use-package wdired)
 
