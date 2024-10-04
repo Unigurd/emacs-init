@@ -181,6 +181,9 @@
 
 
 (use-package flycheck)
+(use-package savehist
+  :init
+  (savehist-mode))
 
 
 ;;
