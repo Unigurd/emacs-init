@@ -235,6 +235,8 @@
 ;;
 
 
+(use-package wdired)
+
 
 (use-package flycheck
   :ensure t
