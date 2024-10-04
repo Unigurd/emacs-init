@@ -81,13 +81,6 @@
 (setf eval-expression-print-length nil
       eval-expression-print-level nil)
 
-(defun gurd-kill-other-buffer ()
-  "Kill buffer in other window."
-  (interactive)
-  (kill-buffer (window-buffer (next-window))))
-
-(global-set-key (kbd "C-S-x k") 'gurd-kill-other-buffer)
-
 ;;Overwrite selected content
 (delete-selection-mode)
 
@@ -116,6 +109,24 @@
 
 ;; show trailing whitespace
 (setq-default show-trailing-whitespace t)
+
+
+(use-package gurd-commands
+  :demand
+  :after (vertico)
+  :bind (("C-S-x k" . gurd-kill-other-buffer)
+         :map lisp-data-mode-map
+         ("C-c *" . earmuffs))
+  :config
+  (with-no-warnings  (advice-add #'vertico-insert :after #'gurd-minibuffer-normalize-path)))
+
+
+(use-package minibuffer
+  :after (gurd-commands)
+  :bind
+  (:map minibuffer-local-map
+        ("M-<backspace>" . gurd-updir)))
+
 
 ;; higher contrast (of what?)
 (use-package shr-color
@@ -484,26 +495,6 @@ Makes them only move half a page down.
 ;;
 
 
-;; Emacs Lisp Elisp
-(defun earmuffs (&optional pos)
-  "Transforms SOME-SYMBOL to *SOME-SYMBOL* or the other way around.
-Uses the symbol at *POS* if it is non-nil and symbol at point otherwise."
-  (interactive)
-  (save-excursion
-    (if pos (goto-char pos))
-    (destructuring-bind (start . end) (bounds-of-thing-at-point 'symbol)
-      (if (and (eql ?* (char-after start))
-               (eql ?* (char-before end)))
-          (progn (goto-char end)
-                 (delete-char -1)
-                 (goto-char start)
-                 (delete-char 1))
-        (goto-char end)
-        (insert-char ?*)
-        (goto-char start)
-        (insert-char ?*)))))
-
-(define-key emacs-lisp-mode-map (kbd "C-c *") 'earmuffs)
 
 (add-hook 'emacs-lisp-mode-hook #'evil-lispy-mode)
 (setq sentence-end-double-space nil)
