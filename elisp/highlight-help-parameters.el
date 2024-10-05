@@ -149,7 +149,6 @@ trailing \"...\".
   ;; parameters might be on multiple lines like for `count-screen-lines'
   (pcase (hhp-info-definition-region limit)
     (`(,start ,end)
-     (message "start: %s end: %s" start end)
      (prog1 (list (mapcar #'symbol-name
                           (cdr (car (read-from-string
                                      (let ((sexpr (format "(%s)" (save-excursion
@@ -157,33 +156,24 @@ trailing \"...\".
                                                                     (progn (goto-char start)
                                                                            (re-search-forward ": "))
                                                                     (progn (end-of-line) (point)))))))
-                                       (message "sexpr: %s" sexpr)
                                        sexpr)))))
                   end)
-       (message "(< point=%s start=%s)" (point) start)
        (when (< (point) start)
-         (goto-char start))))
-    ('() (message "no region")
-     nil)))
+         (goto-char start))))))
 
 (defun hhp-find-help-parameters (_)
   (list (save-excursion (hhp-get-parameters (hhp-get-symbol-name)))
         nil))
 
 (defun hhp-fontify (limit n i &optional rec)
-  (message "\nhhp-fontify")
-  (message "point: %s" (point))
-  (message "rec: %s" rec)
   (let ((state (or hhp-font-lock-state
                    (hhp-font-lock-state limit n i))))
-    (message "state: %s" state)
     (when state
       (cl-destructuring-bind
           (regexp state-limit) state
         (let* ((current-limit (min (or state-limit limit) limit))
                (matchp (let ((case-fold-search nil))
                          (re-search-forward-group regexp 1 current-limit t))))
-          (message "matchp: %s" matchp)
           (if matchp
               matchp
             (setf hhp-font-lock-state nil)
