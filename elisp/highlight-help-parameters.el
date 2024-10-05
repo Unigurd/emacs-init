@@ -6,7 +6,6 @@
 
 ;; TODO: cleanup
 ;; TODO: In info, match on lower param names in the definition line and nowhere else.
-;; TODO: ARGS in `use-package'
 
 (defgroup hhp nil "Customization group for `hhp-mode'"
   :group 'help
@@ -171,15 +170,16 @@ trailing \"...\".
     (when state
       (cl-destructuring-bind
           (regexp state-limit) state
-        (let* ((current-limit (min (or state-limit limit) limit))
-               (matchp (let ((case-fold-search nil))
-                         (re-search-forward-group regexp 1 current-limit t))))
-          (if matchp
-              matchp
-            (setf hhp-font-lock-state nil)
-            (goto-char (1+ current-limit))
-            (unless rec                 ; Only recurse once
-              (hhp-fontify limit n i t))))))))
+        (let ((current-limit (min (or state-limit limit) limit)))
+          (if (<= (point) current-limit)
+              (if-let ((matchp (let ((case-fold-search nil))
+                                 (re-search-forward-group regexp 1 current-limit t))))
+                  matchp
+                (setf hhp-font-lock-state nil)
+                (goto-char (1+ current-limit))
+                (unless rec                 ; Only recurse once
+                  (hhp-fontify limit n i t)))
+            (setf hhp-font-lock-state nil)))))))
 
 (defun re-search-forward-group (regexp subexpr &optional bound no-error count)
   "Belongs elsewhere."
