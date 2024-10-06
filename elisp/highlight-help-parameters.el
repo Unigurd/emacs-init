@@ -148,17 +148,19 @@ trailing \"...\".
   ;; parameters might be on multiple lines like for `count-screen-lines'
   (pcase (hhp-info-definition-region limit)
     (`(,start ,end)
-     (prog1 (list (mapcar #'symbol-name
-                          (cdr (car (read-from-string
-                                     (let ((sexpr (format "(%s)" (save-excursion
-                                                                   (buffer-substring-no-properties
-                                                                    (progn (goto-char start)
-                                                                           (re-search-forward ": "))
-                                                                    (progn (end-of-line) (point)))))))
-                                       sexpr)))))
-                  end)
-       (when (< (point) start)
-         (goto-char start))))))
+     (let* ((string (save-excursion
+                      (buffer-substring-no-properties
+                       (progn (goto-char start)
+                              (re-search-forward ": "))
+                       (progn (end-of-line) (point)))))
+            (expr (car (read-from-string
+                        (let ((sexpr (format "(%s)" string)))
+                          sexpr))))
+            (parameters (cdr expr))
+            (parameter-names (mapcar #'symbol-name parameters)))
+       (prog1 (list parameter-names end)
+         (when (< (point) start)
+           (goto-char start)))))))
 
 (defun hhp-find-help-parameters (_)
   (list (save-excursion (hhp-get-parameters (hhp-get-symbol-name)))
