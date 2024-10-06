@@ -208,11 +208,15 @@ trailing \"...\".
 (define-minor-mode highlight-help-parameters-mode
   "hej"
   :interactive (help-mode)
-  (if highlight-help-parameters-mode
-      (progn (setf hhp-find-parameters-function #'hhp-find-help-parameters)
-             (hhp-add-font-lock-keywords))
-    (hhp-remove-font-lock-keywords))
-  (font-lock-flush))
+  ;; Font lock will override the faces in the buffer created by
+  ;; `list-faces-display', so we try only to enable it for other
+  ;; help buffers.
+  (when (not (string= (buffer-name) "*Faces*"))
+    (if (and highlight-help-parameters-mode )
+        (progn (setf hhp-find-parameters-function #'hhp-find-help-parameters)
+               (hhp-add-font-lock-keywords))
+      (hhp-remove-font-lock-keywords))
+    (font-lock-flush)))
 
 (define-minor-mode highlight-info-parameters-mode
   "hej"
