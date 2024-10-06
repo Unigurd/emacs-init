@@ -394,6 +394,8 @@
     (evil-set-initial-state 'text-mode 'normal))
   (evil-mode))
 
+(use-package edebug-save-evil-state
+  :hook (edebug-mode . gurd-edebug-save-restore-evil-state))
 
 ;; ace-window
 (use-package ace-window
