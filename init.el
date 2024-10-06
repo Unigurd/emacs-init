@@ -573,7 +573,8 @@ Makes them only move half a page down.
 
 ;; My own highlight-help-parameters mode
 (use-package highlight-help-parameters
-  :hook (help-mode . highlight-help-parameters-mode))
+  :hook ((help-mode . highlight-help-parameters-mode)
+         (Info-mode . highlight-info-parameters-mode)))
 
 
 
