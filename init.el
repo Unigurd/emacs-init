@@ -403,11 +403,10 @@
 
 ;; rainbow
 (use-package rainbow-delimiters
-  :config
-  (with-no-warnings
-    (define-globalized-minor-mode my-global-rainbow-delimiters-mode rainbow-delimiters-mode
-      (lambda () (rainbow-delimiters-mode 1)))
-    (my-global-rainbow-delimiters-mode 1)))
+  :hook (after-change-major-mode . (lambda ()
+                                     (unless (and (eq major-mode 'help-mode)
+                                                  (string= (buffer-name) "*Faces*"))
+                                       (rainbow-delimiters-mode)))))
 
 ;;Smart mode line
 (use-package smart-mode-line
